@@ -76,7 +76,25 @@ public class Ide extends BorderPane{
                 } catch(IOException ex){
                 Logger.getLogger(getClass().getName()).log(SEVERE, null, ex);
             }
-        }
+            } else{
+                FileChooser fileChooser = new FileChooser();
+                //only allow text files to be selected using chooser
+                fileChooser.getExtensionFilters().add(
+                        new FileChooser.ExtensionFilter("Documentos de texto (*.txt)", "*.txt", "Java (*.java)")
+                );
+                fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+
+                File archivoGuardar = fileChooser.showSaveDialog(null);
+                if (archivoGuardar != null) {
+                    try {
+                        guardarArchivo(archivoGuardar);
+                        archivoReferencia = archivoGuardar;
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+
+                }
         });
 
 
