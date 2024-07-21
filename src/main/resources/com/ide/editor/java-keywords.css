@@ -1,16 +1,27 @@
+
+.ide{
+    -fx-font-size: 12px;
+    -fx-font-family: "JetBrains Mono";
+}
+
+#java-editor{
+    -fx-font-size: 12px;
+    -fx-font-family: "JetBrains Mono";
+}
+
 .keyword {
-    -fx-fill: purple;
+    -fx-fill: blueviolet;
     -fx-font-weight: bold;
 }
 .semicolon {
     -fx-font-weight: bold;
 }
 .paren {
-    -fx-fill: firebrick;
+    -fx-fill: hotpink;
     -fx-font-weight: bold;
 }
 .bracket {
-    -fx-fill: darkgreen;
+    -fx-fill: seagreen;
     -fx-font-weight: bold;
 }
 .brace {
@@ -18,13 +29,9 @@
     -fx-font-weight: bold;
 }
 .string {
-    -fx-fill: blue;
+    -fx-fill: seagreen;
 }
 
 .comment {
-	-fx-fill: cadetblue;
-}
-
-.paragraph-box:has-caret {
-    -fx-background-color: #f2f9fc;
+	-fx-fill: slategrey;
 }

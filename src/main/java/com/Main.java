@@ -1,22 +1,16 @@
 package com;
 import com.ide.Ide;
 import com.ide.editor.Java;
+import com.ide.editor.fuentes.Fuentes;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import org.fxmisc.flowless.VirtualizedScrollPane;
-import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.LineNumberFactory;
-
-import java.util.function.IntFunction;
 
 public class Main extends Application {
+
+    private final Ide ide = new Ide();
+
     @Override
     public void start(Stage primaryStage) throws Exception {
 
@@ -48,14 +42,25 @@ public class Main extends Application {
        // tabPane.getTabs().add(tab1);
        // root.getChildren().add(tabPane);
 
-        Ide ide = new Ide();
+        ide.getStyleClass().add("ide");
         Scene scene = new Scene(ide, 1200, 960);
-        scene.getStylesheets().add(Java.class.getResource("java-keywords.css").toExternalForm());
+        //scene.getStylesheets().add(Java.class.getResource("java-keywords.css").toExternalForm());
+        //scene.getStylesheets().add(Java.class.getResource("java-keywords.css").toExternalForm());
+        ide.getStylesheets().add(Java.class.getResource("java-keywords.css").toExternalForm());
+        Fuentes.cargarFuentes();
+
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Java Demo");
+        primaryStage.setTitle("IDE Java UNED");
         primaryStage.show();
+        
     }
     public static void main(String[] args) {
         launch(args);
     }
+
+    @Override
+    public void stop() {
+        ide.stopI();
+    }
+
 }

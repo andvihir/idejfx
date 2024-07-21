@@ -1,7 +1,6 @@
 package com.ide.editor;
 
 import javafx.concurrent.Task;
-import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.reactfx.Subscription;
@@ -15,15 +14,15 @@ import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Java extends EditorSimple{
+public class SubrayadoJava extends EditorSimple{
 
     private ExecutorService executor;
 
     private static final String[] PALABRAS_RESERVADAS = new String[] {
-        "abstract", "assert", "boolean", "break", "byte",
+            "abstract", "assert", "boolean", "break", "byte",
             "case", "catch", "char", "class", "const", "continue",
             "default", "do", "double", "else", "enum", "extends",
-             "final", "finally", "float", "for", "goto",
+            "final", "finally", "float", "for", "goto",
             "if", "implements", "import", "instanceof", "int", "interface",
             "long", "native", "new", "package", "private",
             "protected", "public", "return", "short", "static",
@@ -65,26 +64,28 @@ public class Java extends EditorSimple{
             "}"
     });
 
-   // private static final String NUMERO_PATRON = ;
+    // private static final String NUMERO_PATRON = ;
 
     private static final Pattern PATRON = Pattern.compile(
-            "(?<PALABRASRESERVADAS>" + PALABRAS_RESERVADAS_PATRON + ")" +
-            "|(?<COMENTARIO>" + COMENTARIO_PATRON + ")" +
-            "|(?<STRING>" + STRING_PATRON + ")" +
-            "|(?<CLASE>" + CLASE_PATRON + ")" +
-            "|(?<LLAMADAVAR>" + LLAMADA_A_VARIABLE_PATRON + ")" +
-            "|(?<PARENTESIS>" + PARENTESIS_PATRON + ")" +
-            "|(?<CORCHETES>" + CORCHETES_PATRON + ")" +
-            "|(?<PUNTOYCOMA>" + PUNTO_Y_COMA_PATRON + ")" +
-            "|(?<LLAVES>" + LLAVES_PATRON + ")"
-            );
+            "|(?<PALABRASRESERVADAS>" + PALABRAS_RESERVADAS_PATRON + ")" +
+                    "(?<COMENTARIO>" + COMENTARIO_PATRON + ")" +
+                    "|(?<STRING>" + STRING_PATRON + ")" +
+                    "|(?<CLASE>" + CLASE_PATRON + ")" +
+                    "|(?<LLAMADAVAR>" + LLAMADA_A_VARIABLE_PATRON + ")" +
+                    "|(?<PARENTESIS>" + PARENTESIS_PATRON + ")" +
+                    "|(?<CORCHETES>" + CORCHETES_PATRON + ")" +
+                    "|(?<PUNTOYCOMA>" + PUNTO_Y_COMA_PATRON + ")" +
+                    "|(?<LLAVES>" + LLAVES_PATRON + ")"
+    );
 
-    public Java(){
+    public SubrayadoJava(){
         super();
+        //init();
+
         executor = Executors.newSingleThreadExecutor();
         //this.getStylesheets().add(Java.class.getResource(("java-keywords.css")).toExternalForm());
         //this.getStylesheets().add(getClass().getResource("java-keywords.css").toExternalForm());
-        //this.getStylesheets().add("java-keywords.css");
+        this.getStylesheets().add("com/ide/editor/java-keywords.css");
 
         Subscription cleanupWhenDone = this.multiPlainChanges()
                 .successionEnds(Duration.ofMillis(500))
@@ -102,12 +103,15 @@ public class Java extends EditorSimple{
                 .subscribe(this::applyHighlighting);
 
         this.replaceText(0,0,sampleCode);
-        this.setId("java-editor");
-        //this.setStyle("-fx-font-family: \"JetBrains Mono\";");
 
     }
+    /*
+    private void init() {
+        this.plainTextChanges().filter(ch -> !ch.getInserted().equals(ch.getRemoved())).subscribe(new ConsumerEventScheduler<>(50, plainTextChange -> highlight()));
 
-
+        addEventFilter(MouseEvent.MOUSE_RELEASED, event -> highlight());
+    }
+    */
 
     private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
         String text = this.getText();
@@ -116,7 +120,6 @@ public class Java extends EditorSimple{
             protected StyleSpans<Collection<String>> call() throws Exception {
                 return computeHighlighting(text);
             }
-
             @Override
             protected void succeeded() {
                 System.out.println("Task succeeded " );
@@ -160,12 +163,7 @@ public class Java extends EditorSimple{
                                                                 matcher.group("COMENTARIO") != null ? "comment" :
                                                                         null; /* never happens */
         assert styleClass != null;
-
         return styleClass;
-    }
-
-    public static void cargarSubrayadoJava(CodeArea codeArea){
-        codeArea.getStylesheets().add(Java.class.getResource("java-keywords.css").toExternalForm());
     }
 
     public Pattern getPatron(){

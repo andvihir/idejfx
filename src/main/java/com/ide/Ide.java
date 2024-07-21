@@ -2,10 +2,13 @@ package com.ide;
 
 
 import com.ide.editor.EditorSimple;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import com.ide.editor.Java;
+import javafx.geometry.Orientation;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 
@@ -25,6 +28,11 @@ public class Ide extends BorderPane{
     private final MenuBar barraMenu = new MenuBar();
     private final EditorSimple editorSimple = new EditorSimple();
     private File archivoReferencia;
+    private final Java javaEditor = new Java();
+    private final VBox vBox = new VBox();
+    private final TabPane tabPane = new TabPane();
+    private final SplitPane splitPaneH = new SplitPane();
+    private final SplitPane splitPaneV = new SplitPane();
 
 
     public Ide() {
@@ -43,8 +51,9 @@ public class Ide extends BorderPane{
 
         MenuItem menuItemAbrir = new MenuItem("Abrir");
         MenuItem menuItemGuardar = new MenuItem("Guardar");
+        MenuItem menuItemGuardarComo = new MenuItem("Guardar como...");
         MenuItem menuItemSalir = new MenuItem("Salir");
-        menuArchivo.getItems().addAll(menuItemAbrir, menuItemGuardar, menuItemSalir);
+        menuArchivo.getItems().addAll(menuItemAbrir, menuItemGuardar, menuItemGuardarComo, menuItemSalir);
 
         //----- EVENTOS BARRA DE MENU -----
         menuItemSalir.setOnAction(e -> System.exit(0));
@@ -97,6 +106,33 @@ public class Ide extends BorderPane{
                 }
         });
 
+        menuItemGuardarComo.setOnAction(e -> {
+
+            FileChooser fileChooser = new FileChooser();
+            //only allow text files to be selected using chooser
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Documentos de texto (*.txt)", "*.txt", "Java (*.java)")
+            );
+            fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+
+            File archivoGuardar = fileChooser.showSaveDialog(null);
+            if (archivoGuardar != null) {
+                try {
+                    guardarArchivo(archivoGuardar);
+                    archivoReferencia = archivoGuardar;
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+        }
+                });
+
+        //----- ACELERADORES-----
+        menuItemAbrir.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
+        menuItemGuardar.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
+        menuItemSalir.setAccelerator(KeyCombination.keyCombination("Ctrl+Q"));
+
+        //----- ESPACIO DE LAS PESTAÑAS -----
+
 
         //----- BARRA DE NAVEGACIÓN/PROYECTOS -----
 
@@ -104,8 +140,15 @@ public class Ide extends BorderPane{
 
 
         // setTop(barraMenu);
+        //vBox.getChildren().add(barraMenu);
+
+        vBox.getChildren().addAll(tabPane,new VirtualizedScrollPane<>(javaEditor));
+        splitPaneH.getItems().addAll(vBox);
+        splitPaneV.setOrientation(Orientation.VERTICAL);
+        splitPaneV.getItems().addAll(splitPaneH);
         setTop(barraMenu);
-        setCenter(new VirtualizedScrollPane<>(editorSimple));
+        setCenter(splitPaneV);
+        setCenter(new VirtualizedScrollPane<>(javaEditor));
     }
 
     private void cargarAchivoAEditor(File archivo) throws IOException {
@@ -123,13 +166,13 @@ public class Ide extends BorderPane{
             lineasCargadas++;
         }
         archivoReferencia = archivo;
-        editorSimple.replaceText(archivoTotal.toString());
+        javaEditor.replaceText(archivoTotal.toString());
     }
 
     private void guardarArchivo(File archivoReferencia) throws IOException {
 
         FileWriter myWriter = new FileWriter(archivoReferencia);
-        myWriter.write(editorSimple.getText());
+        myWriter.write(javaEditor.getText());
         myWriter.close();
         // lastModifiedTime = FileTime.fromMillis(System.currentTimeMillis() + 3000);
         System.out.println("Guardado con éxito.");
@@ -138,8 +181,7 @@ public class Ide extends BorderPane{
     private MenuBar crearBarraMenu(){
 
     }*/
-    private void a1(){
-
+    public void stopI() {
+        javaEditor.stopJ();
     }
-    //i
 }
