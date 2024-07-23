@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.KeyCombination;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.GenericStyledArea;
 import org.fxmisc.richtext.LineNumberFactory;
@@ -44,6 +45,11 @@ public class EditorSimple extends CodeArea {
         seleccionarTodo.setOnAction(actionEvent -> selectAll());
 
         menuContextual.getItems().addAll(cortar, copiar, pegar, eliminar, seleccionarTodo);
+
+        cortar.setAccelerator(KeyCombination.keyCombination("Ctrl+X"));
+        copiar.setAccelerator(KeyCombination.keyCombination("Ctrl+C"));
+        pegar.setAccelerator(KeyCombination.keyCombination("Ctrl+V"));
+        seleccionarTodo.setAccelerator(KeyCombination.keyCombination("Ctrl+A"));
 
 
         //this.setStyle("-fx-font-size: 14px; -fx-font-family: Arial;");

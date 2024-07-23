@@ -20,16 +20,16 @@ public class VistaProyectos extends VBox {
 
     private final TreeView<Object> treeView = new TreeView<>();
     //private ObjectProperty<TreeView> treeView = new SimpleObjectProperty<>();
-
+/*
     private void createTreeView(String dirPath) {
-        TreeItem<Object> tree = new TreeItem<>(dirPath.substring(dirPath.lastIndexOf(File.separator) + 1), new ImageView(/*icon*/));
+        TreeItem<Object> tree = new TreeItem<>(dirPath.substring(dirPath.lastIndexOf(File.separator) + 1), new ImageView(icon));
         List<TreeItem<Object>> dirs = new ArrayList<>();
         try {
             DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dirPath));
             for (Path path : directoryStream) {
                 if (Files.isDirectory(path)) {
                     String pathString = path.toString();
-                    TreeItem<Object> subDirectory = new TreeItem<>(pathString.substring(pathString.lastIndexOf(File.separator) + 1), new ImageView(/*icon*/));
+                    TreeItem<Object> subDirectory = new TreeItem<>(pathString.substring(pathString.lastIndexOf(File.separator) + 1), new ImageView(icon));
                     getSubLeafs(path, subDirectory);
                     dirs.add(subDirectory);
                 }
@@ -57,6 +57,7 @@ public class VistaProyectos extends VBox {
         treeView.setShowRoot(true);
     }
 
+
     private void getSubLeafs(Path subPath, TreeItem<Object> parent) {
         try {
             DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(subPath.toString()));
@@ -73,5 +74,5 @@ public class VistaProyectos extends VBox {
             e.printStackTrace();
         }
     }
-
+*/
 }

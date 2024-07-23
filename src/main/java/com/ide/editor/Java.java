@@ -116,7 +116,7 @@ public class Java extends EditorSimple{
             protected StyleSpans<Collection<String>> call() throws Exception {
                 return computeHighlighting(text);
             }
-
+            /*
             @Override
             protected void succeeded() {
                 System.out.println("Task succeeded " );
@@ -125,6 +125,8 @@ public class Java extends EditorSimple{
             protected void failed() {
                 System.out.println("Task failed");
             }
+            */
+
         };
         executor.execute(task);
         return task;
@@ -158,7 +160,7 @@ public class Java extends EditorSimple{
                                                 matcher.group("PUNTOYCOMA") != null ? "semicolon" :
                                                         matcher.group("STRING") != null ? "string" :
                                                                 matcher.group("COMENTARIO") != null ? "comment" :
-                                                                        null; /* never happens */
+                                                                        "null"; /* never happens */
         assert styleClass != null;
 
         return styleClass;

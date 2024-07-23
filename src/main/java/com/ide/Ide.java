@@ -3,24 +3,27 @@ package com.ide;
 
 import com.ide.editor.EditorSimple;
 import com.ide.editor.Java;
+import com.ide.pestanas.PanelPestanya;
+import com.ide.proyectos.VistaDirectorios;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.attribute.FileTime;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import static java.util.logging.Level.SEVERE;
 
-public class Ide extends BorderPane{
+public class Ide extends AnchorPane{
 
     //private final BarraMenu barraMenu = new BarraMenu();
     // private final BorderPane borderPane = new BorderPane();
@@ -33,6 +36,12 @@ public class Ide extends BorderPane{
     private final TabPane tabPane = new TabPane();
     private final SplitPane splitPaneH = new SplitPane();
     private final SplitPane splitPaneV = new SplitPane();
+    private final StackPane panelVistaDirectorios = new StackPane();
+    private final ScrollPane scrollPaneDirectorios = new ScrollPane();
+    private final ScrollPane scrollPaneMenuRodapie = new ScrollPane();
+    private final PanelPestanya panelPestanya = new PanelPestanya();
+
+    private VistaDirectorios vistaDirectorios;
 
 
     public Ide() {
@@ -49,19 +58,20 @@ public class Ide extends BorderPane{
 
         barraMenu.getMenus().addAll(menuArchivo, menuEdicion, menuVer, menuAyuda);
 
-        MenuItem menuItemAbrir = new MenuItem("Abrir");
+        MenuItem menuItemAbrirArchivo = new MenuItem("Abrir archivo");
+        MenuItem menuItemAbrirCarpeta = new MenuItem("Abrir carpeta");
         MenuItem menuItemGuardar = new MenuItem("Guardar");
         MenuItem menuItemGuardarComo = new MenuItem("Guardar como...");
         MenuItem menuItemSalir = new MenuItem("Salir");
-        menuArchivo.getItems().addAll(menuItemAbrir, menuItemGuardar, menuItemGuardarComo, menuItemSalir);
+        menuArchivo.getItems().addAll(menuItemAbrirArchivo, menuItemAbrirCarpeta, menuItemGuardar, menuItemGuardarComo, menuItemSalir);
 
         //----- EVENTOS BARRA DE MENU -----
         menuItemSalir.setOnAction(e -> System.exit(0));
 
-        menuItemAbrir.setOnAction(e -> {
+        menuItemAbrirArchivo.setOnAction(e -> {
             FileChooser fileChooser = new FileChooser();
             //only allow text files to be selected using chooser
-            fileChooser.getExtensionFilters().add(
+            fileChooser.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter("Text files (*.txt)", "*.txt", "*.java")
             );
             //set initial directory somewhere user will recognise
@@ -76,6 +86,33 @@ public class Ide extends BorderPane{
                     throw new RuntimeException(ex);
                 }
             }
+        });
+        menuItemAbrirCarpeta.setOnAction(e -> {
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            directoryChooser.setTitle("Abrir Carpeta");
+            directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+            File archivo = directoryChooser.showDialog(null);
+            if (archivo != null) {
+                try{
+                   // VistaDirectorios vistaDirectorios = new VistaDirectorios(archivo, archivo.getName());
+                    vistaDirectorios = new VistaDirectorios(archivo, archivo.getName());
+                    /*
+                    panelVistaDirectorios.getChildren().add(vistaDirectorios);
+                    splitPaneH.getItems().addFirst(panelVistaDirectorios);
+                    splitPaneV.getItems().addAll(splitPaneH);
+                    */
+
+                    scrollPaneDirectorios.setContent(vistaDirectorios);
+                    scrollPaneDirectorios.autosize();
+
+                   // scrollPane.maxHeight()
+                   //setLeft(scrollPane);
+                }catch(Exception ignored){
+                    System.out.println(ignored);
+                }
+            }
+
+
         });
 
         menuItemGuardar.setOnAction(e -> {
@@ -127,7 +164,7 @@ public class Ide extends BorderPane{
                 });
 
         //----- ACELERADORES-----
-        menuItemAbrir.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
+        menuItemAbrirArchivo.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
         menuItemGuardar.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
         menuItemSalir.setAccelerator(KeyCombination.keyCombination("Ctrl+Q"));
 
@@ -140,15 +177,22 @@ public class Ide extends BorderPane{
 
 
         // setTop(barraMenu);
-        //vBox.getChildren().add(barraMenu);
+        vBox.setPrefSize(600,600);
+        VirtualizedScrollPane<Java> vsp = new VirtualizedScrollPane<>(javaEditor);
+        vsp.setPrefSize(800, 800);
+        vBox.getChildren().addAll(tabPane, vsp);
+       // scrollPaneDirectorios.setPrefSize(120,120);
+       // setLeft(scrollPaneDirectorios);
+        splitPaneH.getItems().addAll(scrollPaneDirectorios, vsp);
 
-        vBox.getChildren().addAll(tabPane,new VirtualizedScrollPane<>(javaEditor));
-        splitPaneH.getItems().addAll(vBox);
+        scrollPaneDirectorios.autosize();
+
         splitPaneV.setOrientation(Orientation.VERTICAL);
-        splitPaneV.getItems().addAll(splitPaneH);
-        setTop(barraMenu);
-        setCenter(splitPaneV);
-        setCenter(new VirtualizedScrollPane<>(javaEditor));
+        splitPaneV.getItems().addAll(splitPaneH, scrollPaneMenuRodapie);
+        this.getChildren().addAll(barraMenu,splitPaneV);
+        //setTop(barraMenu);
+        //setCenter(splitPaneV);
+       //setCenter(new VirtualizedScrollPane<>(javaEditor));
     }
 
     private void cargarAchivoAEditor(File archivo) throws IOException {
