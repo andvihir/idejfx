@@ -1,11 +1,11 @@
-package com.ide.menu;
+package com.ide.controladores;
 
 import com.ide.Ide;
+import com.ide.editor.EditorJava;
+import com.ide.editor.EditorSimple;
+import com.ide.menu.BarraMenu;
 import com.ide.proyectos.MenuContextualDirectorios;
 import com.ide.proyectos.TreeDirectorios;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -18,85 +18,18 @@ import java.util.stream.Stream;
 
 import static java.util.logging.Level.SEVERE;
 
-public class BarraMenu extends MenuBar {
-    private final Menu menuArchivo = new Menu("Archivo");
-    private final Menu menuEdicion = new Menu("Edición");
-    private final Menu menuVer = new Menu("Ver");
-    private final Menu menuAyuda = new Menu("Ayuda");
+public class ControladorMenu {
+    private final Ide ide;
+    private final BarraMenu barraMenu;
 
-    private final MenuItem menuItemAbrirArchivo = new MenuItem("Abrir archivo");
-    private final MenuItem menuItemAbrirCarpeta = new MenuItem("Abrir carpeta");
-    private final MenuItem menuItemGuardar = new MenuItem("Guardar");
-    private final MenuItem menuItemGuardarComo = new MenuItem("Guardar como...");
-    private final MenuItem menuItemSalir = new MenuItem("Salir");
-
-
-    public BarraMenu() {
-
-        menuArchivo.getItems().addAll(menuItemAbrirArchivo, menuItemAbrirCarpeta, menuItemGuardar, menuItemGuardarComo, menuItemSalir);
-        this.getMenus().addAll(menuArchivo, menuEdicion, menuVer, menuAyuda);
-
-    }
-
-
-    public BarraMenu(Ide ide) {
-        menuArchivo.getItems().addAll(menuItemAbrirArchivo, menuItemAbrirCarpeta, menuItemGuardar, menuItemGuardarComo, menuItemSalir);
-        this.getMenus().addAll(menuArchivo, menuEdicion, menuVer, menuAyuda);
-       // ControladoresMenu controladoresMenu = new ControladoresMenu(ide);
-
-
-    }
-
-    public Menu getMenuArchivo() {
-        return menuArchivo;
-    }
-
-    public Menu getMenuEdicion() {
-        return menuEdicion;
-    }
-
-    public Menu getMenuVer() {
-        return menuVer;
-    }
-
-    public Menu getMenuAyuda() {
-        return menuAyuda;
-    }
-
-    public MenuItem getMenuItemAbrirArchivo() {
-        return menuItemAbrirArchivo;
-    }
-
-    public MenuItem getMenuItemAbrirCarpeta() {
-        return menuItemAbrirCarpeta;
-    }
-
-    public MenuItem getMenuItemGuardar() {
-        return menuItemGuardar;
-    }
-
-    public MenuItem getMenuItemGuardarComo() {
-        return menuItemGuardarComo;
-    }
-
-    public MenuItem getMenuItemSalir() {
-        return menuItemSalir;
-    }
-
-    public MenuBar getBarraMenu() {
-        return this;
-    }
-/*
-
-    private class ControladoresMenu {
-        private Ide ide;
-        private ControladoresMenu(Ide ide){
+    public ControladorMenu(Ide ide) {
         this.ide = ide;
+        this.barraMenu = ide.getBarraMenu();
 
         //----- EVENTOS BARRA DE MENU -----
-        getMenuItemSalir().setOnAction(e -> System.exit(0));
+        barraMenu.getMenuItemSalir().setOnAction(e -> System.exit(0));
 
-        getMenuItemAbrirArchivo().setOnAction(e -> {
+        barraMenu.getMenuItemAbrirArchivo().setOnAction(e -> {
             FileChooser fileChooser = new FileChooser();
             //only allow text files to be selected using chooser
             fileChooser.getExtensionFilters().addAll(
@@ -109,22 +42,27 @@ public class BarraMenu extends MenuBar {
             //if file has been chosen, load it using asynchronous method (define later)
             if (archivo != null) {
                 try {
-                    cargarAchivoAEditor(archivo, getExtensionArchivo(archivo.getName()).get().equals("java"));
-                    System.out.println("Extension:" + getExtensionArchivo(archivo.getName()).get());
+                    cargarArchivoAEditor(archivo, getExtensionArchivo(archivo.getName()).get().equals("java"));
+                    //System.out.println("Extension:" + getExtensionArchivo(archivo.getName()).get());
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
             }
         });
-        getMenuItemAbrirCarpeta().setOnAction(e -> {
+        barraMenu.getMenuItemAbrirCarpeta().setOnAction(e -> {
             DirectoryChooser directoryChooser = new DirectoryChooser();
             directoryChooser.setTitle("Abrir Carpeta");
             directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
             File archivo = directoryChooser.showDialog(null);
             if (archivo != null) {
-                try{
+                try {
                     // VistaDirectorios vistaDirectorios = new VistaDirectorios(archivo, archivo.getName());
                     this.ide.setTreeDirectorios(new TreeDirectorios(archivo, archivo.getName()));
+                    /*
+                    panelVistaDirectorios.getChildren().add(vistaDirectorios);
+                    splitPaneH.getItems().addFirst(panelVistaDirectorios);
+                    splitPaneV.getItems().addAll(splitPaneH);
+                    */
 
                     this.ide.getBarraDirectorios().setContent(this.ide.getTreeDirectorios());
                     this.ide.getBarraDirectorios().setContextMenu(new MenuContextualDirectorios());
@@ -132,7 +70,7 @@ public class BarraMenu extends MenuBar {
 
                     // scrollPane.maxHeight()
                     //setLeft(scrollPane);
-                }catch(Exception ignored){
+                } catch (Exception ignored) {
                     System.out.println(ignored);
                 }
             }
@@ -140,14 +78,14 @@ public class BarraMenu extends MenuBar {
 
         });
 
-        getMenuItemGuardar().setOnAction(e -> {
+        barraMenu.getMenuItemGuardar().setOnAction(e -> {
             if (this.ide.getArchivoReferencia() != null) {
                 try {
                     guardarArchivo(this.ide.getArchivoReferencia());
-                } catch(IOException ex){
+                } catch (IOException ex) {
                     Logger.getLogger(getClass().getName()).log(SEVERE, null, ex);
                 }
-            } else{
+            } else {
                 FileChooser fileChooser = new FileChooser();
                 //only allow text files to be selected using chooser
                 fileChooser.getExtensionFilters().add(
@@ -168,7 +106,7 @@ public class BarraMenu extends MenuBar {
             }
         });
 
-        getMenuItemGuardarComo().setOnAction(e -> {
+        barraMenu.getMenuItemGuardarComo().setOnAction(e -> {
 
             FileChooser fileChooser = new FileChooser();
             //only allow text files to be selected using chooser
@@ -189,12 +127,13 @@ public class BarraMenu extends MenuBar {
         });
 
         //----- ACELERADORES-----
-        getMenuItemAbrirArchivo().setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
-        getMenuItemGuardar().setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
-        getMenuItemSalir().setAccelerator(KeyCombination.keyCombination("Ctrl+Q"));
+        barraMenu.getMenuItemAbrirArchivo().setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
+        barraMenu.getMenuItemGuardar().setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
+        barraMenu.getMenuItemSalir().setAccelerator(KeyCombination.keyCombination("Ctrl+Q"));
 
     }
-    private void cargarAchivoAEditor(File archivo, boolean subrayadoJava) throws IOException {
+
+    private void cargarArchivoAEditor(File archivo, boolean subrayadoJava) throws IOException {
         BufferedReader texto = new BufferedReader(new FileReader(archivo));
         long lineasTotal;
         try (Stream<String> stream = Files.lines(archivo.toPath())) {
@@ -203,13 +142,30 @@ public class BarraMenu extends MenuBar {
         String linea;
         StringBuilder archivoTotal = new StringBuilder();
         long lineasCargadas = 0;
-        while( (linea = texto.readLine()) != null) {
+        while ((linea = texto.readLine()) != null) {
             archivoTotal.append(linea);
             archivoTotal.append("\n");
             lineasCargadas++;
         }
         this.ide.setArchivoReferencia(archivo);
-        this.ide.getEditor().replaceText(archivoTotal.toString());
+        /*
+        if(subrayadoJava){
+            this.ide.cargarEditorJava();
+        }else{
+            this.ide.cargarEditorSimple();
+        }*/
+        if (subrayadoJava) {
+            EditorJava editorJava = new EditorJava();
+            editorJava.replaceText(archivoTotal.toString());
+            this.ide.getPanelPestanya().abrirPestana(editorJava, archivo.getName());
+        }else{
+            EditorSimple editorSimple = new EditorSimple();
+            editorSimple.replaceText(archivoTotal.toString());
+            this.ide.getPanelPestanya().abrirPestana(editorSimple, archivo.getName());
+
+        }
+
+        //this.ide.getEditor().replaceText(archivoTotal.toString());
     }
 
     private void guardarArchivo(File archivoReferencia) throws IOException {
@@ -220,11 +176,10 @@ public class BarraMenu extends MenuBar {
         // lastModifiedTime = FileTime.fromMillis(System.currentTimeMillis() + 3000);
         System.out.println("Guardado con éxito.");
     }
-        private Optional<String> getExtensionArchivo(String filename) {
-            return Optional.ofNullable(filename)
-                    .filter(f -> f.contains("."))
-                    .map(f -> f.substring(filename.lastIndexOf(".") + 1));
-        }
+
+    private Optional<String> getExtensionArchivo(String filename) {
+        return Optional.ofNullable(filename)
+                .filter(f -> f.contains("."))
+                .map(f -> f.substring(filename.lastIndexOf(".") + 1));
     }
-    */
 }

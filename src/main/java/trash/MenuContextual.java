@@ -1,8 +1,7 @@
-package com.ide.editor;
+package trash;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import org.fxmisc.richtext.CodeArea;
 
 public class MenuContextual extends ContextMenu {
     public MenuContextual() {
@@ -13,7 +12,7 @@ public class MenuContextual extends ContextMenu {
         MenuItem seleccionarTodo = new MenuItem("Seleccionar todo");
 
         this.getItems().addAll(cortar, copiar, pegar, eliminar, seleccionarTodo);
-       // copiar.setOnAction(actionEvent -> paste());
+
 
     }
 }

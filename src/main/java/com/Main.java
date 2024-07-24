@@ -1,10 +1,9 @@
 package com;
 import com.ide.Ide;
-import com.ide.editor.Java;
+import com.ide.editor.EditorJava;
 import com.ide.editor.fuentes.Fuentes;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -46,7 +45,7 @@ public class Main extends Application {
         Scene scene = new Scene(ide, 1200, 960);
         //scene.getStylesheets().add(Java.class.getResource("java-keywords.css").toExternalForm());
         //scene.getStylesheets().add(Java.class.getResource("java-keywords.css").toExternalForm());
-        ide.getStylesheets().add(Java.class.getResource("java-keywords.css").toExternalForm());
+        ide.getStylesheets().add(EditorJava.class.getResource("java-keywords.css").toExternalForm());
         Fuentes.cargarFuentes();
 
         primaryStage.setScene(scene);

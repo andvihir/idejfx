@@ -1,24 +1,24 @@
-package com.ide.menu;
+package trash;
 
-import com.ide.editor.EditorSimple;
+import com.ide.Ide;
+import com.ide.menu.BarraMenu;
 import com.ide.proyectos.VistaDirectorios;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import static java.util.logging.Level.SEVERE;
 
-public class ControladoresMenu extends BarraMenu{
+public class ControladoresMenu extends BarraMenu {
+    private Ide ide;
 
-    public ControladoresMenu(){
+    public ControladoresMenu(Ide ide){
+        this.ide = ide;
     //----- EVENTOS BARRA DE MENU -----
         getMenuItemSalir().setOnAction(e -> System.exit(0));
 
@@ -49,15 +49,15 @@ public class ControladoresMenu extends BarraMenu{
         if (archivo != null) {
             try{
                 // VistaDirectorios vistaDirectorios = new VistaDirectorios(archivo, archivo.getName());
-                vistaDirectorios = new VistaDirectorios(archivo, archivo.getName());
+                this.ide.setVistaDirectorios(new VistaDirectorios(archivo, archivo.getName()));
                     /*
                     panelVistaDirectorios.getChildren().add(vistaDirectorios);
                     splitPaneH.getItems().addFirst(panelVistaDirectorios);
                     splitPaneV.getItems().addAll(splitPaneH);
                     */
 
-                scrollPaneDirectorios.setContent(vistaDirectorios);
-                scrollPaneDirectorios.autosize();
+                this.ide.getPanelDirectorios().setContent(this.ide.getVistaDirectorios());
+                //this.getPanelDirectorios().autosize();
 
                 // scrollPane.maxHeight()
                 //setLeft(scrollPane);
@@ -70,9 +70,9 @@ public class ControladoresMenu extends BarraMenu{
     });
 
         getMenuItemGuardar().setOnAction(e -> {
-        if (archivoReferencia != null) {
+        if (this.ide.getArchivoReferencia() != null) {
             try {
-                guardarArchivo(archivoReferencia);
+                guardarArchivo(this.ide.getArchivoReferencia());
             } catch(IOException ex){
                 Logger.getLogger(getClass().getName()).log(SEVERE, null, ex);
             }
@@ -88,7 +88,7 @@ public class ControladoresMenu extends BarraMenu{
             if (archivoGuardar != null) {
                 try {
                     guardarArchivo(archivoGuardar);
-                    archivoReferencia = archivoGuardar;
+                    this.ide.setArchivoReferencia(archivoGuardar);
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -110,7 +110,7 @@ public class ControladoresMenu extends BarraMenu{
         if (archivoGuardar != null) {
             try {
                 guardarArchivo(archivoGuardar);
-                archivoReferencia = archivoGuardar;
+                this.ide.setArchivoReferencia(archivoGuardar);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
@@ -123,7 +123,7 @@ public class ControladoresMenu extends BarraMenu{
         getMenuItemSalir().setAccelerator(KeyCombination.keyCombination("Ctrl+Q"));
 
 }
-private File cargarAchivoAEditor(File archivo, EditorSimple editor) throws IOException {
+private void cargarAchivoAEditor(File archivo) throws IOException {
     BufferedReader texto = new BufferedReader(new FileReader(archivo));
     long lineasTotal;
     try (Stream<String> stream = Files.lines(archivo.toPath())) {
@@ -137,7 +137,16 @@ private File cargarAchivoAEditor(File archivo, EditorSimple editor) throws IOExc
         archivoTotal.append("\n");
         lineasCargadas++;
     }
-    editor.replaceText(archivoTotal.toString());
-    return archivo;
+    this.ide.setArchivoReferencia(archivo);
+    this.ide.getEditor().replaceText(archivoTotal.toString());
 }
+
+    private void guardarArchivo(File archivoReferencia) throws IOException {
+
+        FileWriter myWriter = new FileWriter(archivoReferencia);
+        myWriter.write(this.ide.getEditor().getText());
+        myWriter.close();
+        // lastModifiedTime = FileTime.fromMillis(System.currentTimeMillis() + 3000);
+        System.out.println("Guardado con éxito.");
+    }
 }

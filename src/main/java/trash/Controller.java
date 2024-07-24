@@ -1,4 +1,4 @@
-package com.ide.editor;
+package trash;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;

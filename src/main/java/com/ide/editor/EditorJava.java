@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Java extends EditorSimple{
+public class EditorJava extends EditorSimple{
 
     private ExecutorService executor;
 
@@ -79,7 +79,7 @@ public class Java extends EditorSimple{
             "|(?<LLAVES>" + LLAVES_PATRON + ")"
             );
 
-    public Java(){
+    public EditorJava(){
         super();
         executor = Executors.newSingleThreadExecutor();
         //this.getStylesheets().add(Java.class.getResource(("java-keywords.css")).toExternalForm());
@@ -167,7 +167,7 @@ public class Java extends EditorSimple{
     }
 
     public static void cargarSubrayadoJava(CodeArea codeArea){
-        codeArea.getStylesheets().add(Java.class.getResource("java-keywords.css").toExternalForm());
+        codeArea.getStylesheets().add(EditorJava.class.getResource("java-keywords.css").toExternalForm());
     }
 
     public Pattern getPatron(){

@@ -4,17 +4,18 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.control.cell.CheckBoxTreeCell;
-import javafx.scene.layout.VBox;
 
 import java.io.File;
 
-public class VistaDirectorios extends TreeView {
+public class TreeDirectorios extends TreeView {
+    private TreeItem<String> parent;
+    private File root_file;
+    private TreeItem rootItem;
 
-    public VistaDirectorios(){
-        TreeItem<String> parent = new TreeItem<>();
+    public TreeDirectorios() {
+
     }
-    public VistaDirectorios(File root_file, String nombreProyecto){
+    public TreeDirectorios(File root_file, String nombreProyecto){
         TreeItem<String> parent = new TreeItem<>(nombreProyecto);
         parent.setExpanded(true);
         createTree(root_file, parent);
@@ -22,6 +23,7 @@ public class VistaDirectorios extends TreeView {
 
 
     }
+
 
     public void createTree(File root_file, TreeItem parent) {
         if (root_file.isDirectory()) {

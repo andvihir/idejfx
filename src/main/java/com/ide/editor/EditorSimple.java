@@ -14,6 +14,7 @@ import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.reactfx.Subscription;
 import org.reactfx.collection.ListModification;
 
+import java.io.File;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,32 +26,13 @@ import java.util.regex.Matcher;
 
 public class EditorSimple extends CodeArea {
 
-    private ExecutorService executor;
+    private File archivoReferencia;
 
     public EditorSimple() {
         this.setParagraphGraphicFactory(LineNumberFactory.get(this));
-        ContextMenu menuContextual = new ContextMenu();
-        this.setContextMenu(menuContextual);
 
-        MenuItem cortar = new MenuItem("Cortar");
-        MenuItem copiar = new MenuItem("Copiar");
-        MenuItem pegar = new MenuItem("Pegar");
-        MenuItem eliminar = new MenuItem("Eliminar");
-        MenuItem seleccionarTodo = new MenuItem("Seleccionar todo");
-
-        cortar.setOnAction(actionEvent -> cut());
-        copiar.setOnAction(actionEvent -> copy());
-        pegar.setOnAction(actionEvent -> paste());
-        eliminar.setOnAction(actionEvent -> replaceSelection(""));
-        seleccionarTodo.setOnAction(actionEvent -> selectAll());
-
-        menuContextual.getItems().addAll(cortar, copiar, pegar, eliminar, seleccionarTodo);
-
-        cortar.setAccelerator(KeyCombination.keyCombination("Ctrl+X"));
-        copiar.setAccelerator(KeyCombination.keyCombination("Ctrl+C"));
-        pegar.setAccelerator(KeyCombination.keyCombination("Ctrl+V"));
-        seleccionarTodo.setAccelerator(KeyCombination.keyCombination("Ctrl+A"));
-
+        //-----**** MENU CONTEXTUAL ****-----
+        MenuContextualEditor menuContextualEditor = new MenuContextualEditor(this);
 
         //this.setStyle("-fx-font-size: 14px; -fx-font-family: Arial;");
         //this.getStyleClass().add("editorSimple");
@@ -58,4 +40,11 @@ public class EditorSimple extends CodeArea {
 
 
     }
+    public File getArchivoReferencia(){
+        return this.archivoReferencia;
+    }
+    public void setArchivoReferencia(File archivoReferencia){
+        this.archivoReferencia = archivoReferencia;
+    }
+
     }
