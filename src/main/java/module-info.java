@@ -15,4 +15,5 @@ module JavaFXPFG.v {
     requires javafx.graphics;
     requires richtextfx.fat;
     requires com.dlsc.formsfx;
+    requires java.desktop;
 }

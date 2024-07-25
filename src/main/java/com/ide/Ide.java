@@ -27,7 +27,7 @@ public class Ide extends BorderPane{
     //private final ControladoresMenu controladoresMenu = new ControladoresMenu(this);
     private final EditorSimple editorSimple = new EditorSimple();
     private final EditorJava editorJava = new EditorJava();
-    private CodeArea editor = new EditorSimple();
+    private EditorSimple editor = new EditorSimple();
     private VirtualizedScrollPane<CodeArea> editorView = new VirtualizedScrollPane<>(editor);
     private final VBox vBox = new VBox();
     private final SplitPane splitPaneH = new SplitPane();
@@ -83,8 +83,8 @@ public class Ide extends BorderPane{
     public void stopI() {
         editorJava.stopJ();
     }
-    public CodeArea getEditor(){
-        return this.editorJava;
+    public EditorSimple getEditor(){
+        return this.panelPestanya.getPestanyaSeleccionada().getEditor();
     }
 /*
     public void cargarEditorSimple(){

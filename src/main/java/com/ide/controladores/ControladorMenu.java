@@ -79,9 +79,9 @@ public class ControladorMenu {
         });
 
         barraMenu.getMenuItemGuardar().setOnAction(e -> {
-            if (this.ide.getArchivoReferencia() != null) {
+            if (this.ide.getEditor().getArchivoReferencia() != null) {
                 try {
-                    guardarArchivo(this.ide.getArchivoReferencia());
+                    guardarArchivo(this.ide.getEditor().getArchivoReferencia());
                 } catch (IOException ex) {
                     Logger.getLogger(getClass().getName()).log(SEVERE, null, ex);
                 }
@@ -97,7 +97,7 @@ public class ControladorMenu {
                 if (archivoGuardar != null) {
                     try {
                         guardarArchivo(archivoGuardar);
-                        this.ide.setArchivoReferencia(archivoGuardar);
+                        this.ide.getEditor().setArchivoReferencia(archivoGuardar);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -118,8 +118,11 @@ public class ControladorMenu {
             File archivoGuardar = fileChooser.showSaveDialog(null);
             if (archivoGuardar != null) {
                 try {
+
+                    //TODO hacer con que cambie el nombre de la pestaña cuando guarda como nuevo archivo y cambiar el editor
+
                     guardarArchivo(archivoGuardar);
-                    this.ide.setArchivoReferencia(archivoGuardar);
+                    this.ide.getEditor().setArchivoReferencia(archivoGuardar);
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -147,7 +150,6 @@ public class ControladorMenu {
             archivoTotal.append("\n");
             lineasCargadas++;
         }
-        this.ide.setArchivoReferencia(archivo);
         /*
         if(subrayadoJava){
             this.ide.cargarEditorJava();
@@ -158,10 +160,12 @@ public class ControladorMenu {
             EditorJava editorJava = new EditorJava();
             editorJava.replaceText(archivoTotal.toString());
             this.ide.getPanelPestanya().abrirPestana(editorJava, archivo.getName());
+            editorJava.setArchivoReferencia(archivo);
         }else{
             EditorSimple editorSimple = new EditorSimple();
             editorSimple.replaceText(archivoTotal.toString());
             this.ide.getPanelPestanya().abrirPestana(editorSimple, archivo.getName());
+            editorSimple.setArchivoReferencia(archivo);
 
         }
 
@@ -182,4 +186,6 @@ public class ControladorMenu {
                 .filter(f -> f.contains("."))
                 .map(f -> f.substring(filename.lastIndexOf(".") + 1));
     }
+
+
 }
