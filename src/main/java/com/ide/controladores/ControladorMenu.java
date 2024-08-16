@@ -6,12 +6,26 @@ import com.ide.editor.EditorSimple;
 import com.ide.menu.BarraMenu;
 import com.ide.proyectos.MenuContextualDirectorios;
 import com.ide.proyectos.TreeDirectorios;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -22,9 +36,12 @@ public class ControladorMenu {
     private final Ide ide;
     private final BarraMenu barraMenu;
 
+
     public ControladorMenu(Ide ide) {
         this.ide = ide;
         this.barraMenu = ide.getBarraMenu();
+
+
 
         //----- EVENTOS BARRA DE MENU -----
         barraMenu.getMenuItemSalir().setOnAction(e -> System.exit(0));
@@ -49,6 +66,7 @@ public class ControladorMenu {
                 }
             }
         });
+
         barraMenu.getMenuItemAbrirCarpeta().setOnAction(e -> {
             DirectoryChooser directoryChooser = new DirectoryChooser();
             directoryChooser.setTitle("Abrir Carpeta");
@@ -79,6 +97,8 @@ public class ControladorMenu {
         });
 
         barraMenu.getMenuItemGuardar().setOnAction(e -> {
+            if(this.ide.getEditor()==null) return;
+
             if (this.ide.getEditor().getArchivoReferencia() != null) {
                 try {
                     guardarArchivo(this.ide.getEditor().getArchivoReferencia());
@@ -98,6 +118,7 @@ public class ControladorMenu {
                     try {
                         guardarArchivo(archivoGuardar);
                         this.ide.getEditor().setArchivoReferencia(archivoGuardar);
+                        this.ide.getEditor().setModificado(false);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -107,6 +128,7 @@ public class ControladorMenu {
         });
 
         barraMenu.getMenuItemGuardarComo().setOnAction(e -> {
+            if(this.ide.getEditor()==null) return;
 
             FileChooser fileChooser = new FileChooser();
             //only allow text files to be selected using chooser
@@ -123,10 +145,44 @@ public class ControladorMenu {
 
                     guardarArchivo(archivoGuardar);
                     this.ide.getEditor().setArchivoReferencia(archivoGuardar);
+                    this.ide.getEditor().setModificado(false);
+                    this.ide.getPanelPestanya().getPestanyaSeleccionada().setText(archivoGuardar.getName());
+
                 } catch (IOException ex) {
+
                     throw new RuntimeException(ex);
+
                 }
             }
+        });
+
+        barraMenu.getMenuItemDeshacer().setOnAction(e ->{
+            if(this.ide.getEditor()==null) return;
+            this.ide.getEditor().undo();
+        });
+        barraMenu.getMenuItemCortar().setOnAction(e ->{
+            if(this.ide.getEditor()==null) return;
+            this.ide.getEditor().cut();
+        });
+        barraMenu.getMenuItemCopiar().setOnAction(e ->{
+            if(this.ide.getEditor()==null) return;
+            this.ide.getEditor().copy();
+        });
+        barraMenu.getMenuItemPegar().setOnAction(e ->{
+            if(this.ide.getEditor()==null) return;
+            this.ide.getEditor().paste();
+        });
+        barraMenu.getMenuItemEliminar().setOnAction(e ->{
+            if(this.ide.getEditor()==null) return;
+            this.ide.getEditor().replaceSelection("");
+        });
+        barraMenu.getMenuItemBuscar().setOnAction(e ->{
+            if(this.ide.getEditor()==null) return;
+            buscarTextoMenu();
+        });
+        barraMenu.getMenuItemSeleccionarTodo().setOnAction(e ->{
+            if(this.ide.getEditor()==null) return;
+            this.ide.getEditor().selectAll();
         });
 
         //----- ACELERADORES-----
@@ -134,9 +190,18 @@ public class ControladorMenu {
         barraMenu.getMenuItemGuardar().setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
         barraMenu.getMenuItemSalir().setAccelerator(KeyCombination.keyCombination("Ctrl+Q"));
 
+        barraMenu.getMenuItemDeshacer().setAccelerator(KeyCombination.keyCombination("Ctrl+Z"));
+        barraMenu.getMenuItemCortar().setAccelerator(KeyCombination.keyCombination("Ctrl+X"));
+        barraMenu.getMenuItemCopiar().setAccelerator(KeyCombination.keyCombination("Ctrl+C"));
+        barraMenu.getMenuItemPegar().setAccelerator(KeyCombination.keyCombination("Ctrl+V"));
+        barraMenu.getMenuItemSeleccionarTodo().setAccelerator(KeyCombination.keyCombination("Ctrl+A"));
+        barraMenu.getMenuItemBuscar().setAccelerator(KeyCombination.keyCombination("Ctrl+F"));
+
     }
 
     private void cargarArchivoAEditor(File archivo, boolean subrayadoJava) throws IOException {
+        if(this.ide.getPanelPestanya().estaArchivoYaAbierto(archivo)) return;
+
         BufferedReader texto = new BufferedReader(new FileReader(archivo));
         long lineasTotal;
         try (Stream<String> stream = Files.lines(archivo.toPath())) {
@@ -157,15 +222,17 @@ public class ControladorMenu {
             this.ide.cargarEditorSimple();
         }*/
         if (subrayadoJava) {
-            EditorJava editorJava = new EditorJava();
-            editorJava.replaceText(archivoTotal.toString());
-            this.ide.getPanelPestanya().abrirPestana(editorJava, archivo.getName());
+            EditorJava editorJava = new EditorJava(archivoTotal.toString());
+            //editorJava.replaceText(archivoTotal.toString());
+            this.ide.getPanelPestanya().abrirPestana(editorJava, archivo.getName(), archivo);
             editorJava.setArchivoReferencia(archivo);
+            subscribe(editorJava);
         }else{
-            EditorSimple editorSimple = new EditorSimple();
-            editorSimple.replaceText(archivoTotal.toString());
-            this.ide.getPanelPestanya().abrirPestana(editorSimple, archivo.getName());
+            EditorSimple editorSimple = new EditorSimple(archivoTotal.toString());
+           // editorSimple.replaceText(archivoTotal.toString());
+            this.ide.getPanelPestanya().abrirPestana(editorSimple, archivo.getName(), archivo);
             editorSimple.setArchivoReferencia(archivo);
+            subscribe(editorSimple);
 
         }
 
@@ -185,6 +252,43 @@ public class ControladorMenu {
         return Optional.ofNullable(filename)
                 .filter(f -> f.contains("."))
                 .map(f -> f.substring(filename.lastIndexOf(".") + 1));
+    }
+
+    private void buscarTextoMenu(){
+        IntegerProperty indice = new SimpleIntegerProperty(-1);
+        TextField texto = new TextField();
+        texto.textProperty().addListener(p -> indice.set(-1));
+        HBox pane = new HBox(10, new Label("Buscar: "), texto);
+
+        Button siguiente = new Button("Siguiente");
+        Button anterior = new Button("Anterior");
+        siguiente.setOnAction(ev -> this.ide.getEditor().buscarTexto(texto.getText(), true, indice) );
+        anterior.setOnAction(ev -> this.ide.getEditor().buscarTexto(texto.getText(), false, indice) );
+        texto.setOnKeyPressed(ev -> {
+                if(ev.getCode() == KeyCode.ENTER){
+                    siguiente.fire();
+                }
+        });
+
+        HBox paneBoton = new HBox(10, siguiente, anterior);
+        paneBoton.setAlignment(Pos.CENTER);
+
+        VBox raiz = new VBox(20, pane, paneBoton);
+        raiz.setPadding(new Insets(20));
+
+        Stage dialogo = new Stage();
+        dialogo.initStyle(StageStyle.UTILITY);
+        dialogo.setTitle("Buscar");
+        dialogo.setScene(new Scene(raiz, 300, 120));
+        dialogo.show();
+    }
+
+    public void subscribe(EditorSimple editorSimple)
+    {
+        editorSimple.plainTextChanges().subscribe(ptc ->
+        {
+            editorSimple.setModificado(true);
+        });
     }
 
 

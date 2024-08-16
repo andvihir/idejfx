@@ -106,7 +106,33 @@ public class EditorJava extends EditorSimple{
         //this.setStyle("-fx-font-family: \"JetBrains Mono\";");
 
     }
+    public EditorJava(String text){
+        super(text);
+        executor = Executors.newSingleThreadExecutor();
+        //this.getStylesheets().add(Java.class.getResource(("java-keywords.css")).toExternalForm());
+        //this.getStylesheets().add(getClass().getResource("java-keywords.css").toExternalForm());
+        //this.getStylesheets().add("java-keywords.css");
 
+        Subscription cleanupWhenDone = this.multiPlainChanges()
+                .successionEnds(Duration.ofMillis(500))
+                .retainLatestUntilLater(executor)
+                .supplyTask(this::computeHighlightingAsync)
+                .awaitLatest(this.multiPlainChanges())
+                .filterMap(t -> {
+                    if(t.isSuccess()) {
+                        return Optional.of(t.get());
+                    } else {
+                        t.getFailure().printStackTrace();
+                        return Optional.empty();
+                    }
+                })
+                .subscribe(this::applyHighlighting);
+
+        this.replaceText(0,0,sampleCode);
+        this.setId("java-editor");
+        //this.setStyle("-fx-font-family: \"JetBrains Mono\";");
+
+    }
 
 
     private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
@@ -174,7 +200,7 @@ public class EditorJava extends EditorSimple{
         return PATRON;
     }
 
-    public void stopJ() {
+    public void cerrarEditorJava() {
         executor.shutdown();
     }
 

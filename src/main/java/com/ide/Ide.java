@@ -8,6 +8,8 @@ import com.ide.menu.BarraMenu;
 import com.ide.pestanas.PanelPestanya;
 import com.ide.proyectos.BarraDirectorios;
 import com.ide.proyectos.TreeDirectorios;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -35,6 +37,7 @@ public class Ide extends BorderPane{
     private final ScrollPane scrollPaneMenuRodapie = new ScrollPane();
     private final PanelPestanya panelPestanya = new PanelPestanya();
 
+
     private final BarraDirectorios barraDirectorios = new BarraDirectorios();
     private TreeDirectorios treeDirectorios;
     private ControladorMenu controladorMenu = new ControladorMenu(this);
@@ -60,13 +63,13 @@ public class Ide extends BorderPane{
         //vBox.getChildren().addAll(panelPestanya);
        // scrollPaneDirectorios.setPrefSize(120,120);
        // setLeft(scrollPaneDirectorios);
-        splitPaneH.setDividerPositions(0.21);
         splitPaneH.getItems().addAll(barraDirectorios, panelPestanya);
+        splitPaneH.setDividerPositions(0.18);
 
 
         splitPaneV.setOrientation(Orientation.VERTICAL);
-        splitPaneV.setDividerPositions(0.76);
         splitPaneV.getItems().addAll(splitPaneH, scrollPaneMenuRodapie);
+        splitPaneV.setDividerPositions(0.75);
        // this.getChildren().addAll(barraMenu,splitPaneV);
         setTop(barraMenu);
         setCenter(splitPaneV);
@@ -80,11 +83,18 @@ public class Ide extends BorderPane{
     private MenuBar crearBarraMenu(){
 
     }*/
+    /*
     public void stopI() {
-        editorJava.stopJ();
-    }
+        editorJava.cerrarEditorJava();
+    }*/
+    /*
+    public void cerrarIDE(){
+        if(this.panelPestanya.getTabs()!=null) this.panelPestanya.cerrarTodasPestanas();
+    }*/
     public EditorSimple getEditor(){
-        return this.panelPestanya.getPestanyaSeleccionada().getEditor();
+        if(this.panelPestanya.getPestanyaSeleccionada()==null){
+            return null;
+        }else return this.panelPestanya.getPestanyaSeleccionada().getEditor();
     }
 /*
     public void cargarEditorSimple(){
@@ -111,4 +121,18 @@ public class Ide extends BorderPane{
     public PanelPestanya getPanelPestanya(){
         return this.panelPestanya;
     }
+
+    /*
+    public ReadOnlyBooleanProperty hayArchivoAbierto(Ide ide){
+        final SimpleBooleanProperty propiedad = new SimpleBooleanProperty(false);
+        if(this.getEditor()!=null){
+            propiedad.set(true);
+        }
+
+    }*/
+
+    public void cerrarYGuardar() throws IOException {
+        this.panelPestanya.cerrarYGuardarTodasPestanas();
+    }
+
 }

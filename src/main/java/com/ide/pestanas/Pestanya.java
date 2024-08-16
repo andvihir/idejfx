@@ -4,9 +4,12 @@ import com.ide.editor.EditorSimple;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.Pane;
 
+import java.io.File;
+
 public class Pestanya extends Tab {
     private EditorSimple editor;
     private PanelPestanya panelPestanya;
+    private File archivo;
 
     public Pestanya(){
         super();
@@ -27,6 +30,13 @@ public class Pestanya extends Tab {
         this.panelPestanya = panelPadre;
     }
 
+    public Pestanya(String s, EditorSimple editor, PanelPestanya panelPadre, File archivo) {
+        super(s);
+        this.editor = editor;
+        this.panelPestanya = panelPadre;
+        this.archivo = archivo;
+    }
+
     public EditorSimple getEditor() {
         return editor;
     }
@@ -41,5 +51,13 @@ public class Pestanya extends Tab {
 
     public void setPanelPestanya(PanelPestanya panelPestanya) {
         this.panelPestanya = panelPestanya;
+    }
+
+    public File getArchivo() {
+        return archivo;
+    }
+
+    public void setArchivo(File archivo) {
+        this.archivo = archivo;
     }
 }

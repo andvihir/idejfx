@@ -6,6 +6,7 @@ import com.ide.proyectos.TreeDirectorios;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -30,17 +31,37 @@ public class BarraMenu extends MenuBar {
     private final MenuItem menuItemGuardarComo = new MenuItem("Guardar como...");
     private final MenuItem menuItemSalir = new MenuItem("Salir");
 
+    private final MenuItem menuItemDeshacer = new MenuItem("Deshacer");
+    private final MenuItem menuItemCortar = new MenuItem("Cortar");
+    private final MenuItem menuItemCopiar = new MenuItem("Copiar");
+    private final MenuItem menuItemPegar = new MenuItem("Pegar");
+    private final MenuItem menuItemEliminar = new MenuItem("Eliminar");
+    private final MenuItem menuItemBuscar = new MenuItem("Buscar...");
+    private final MenuItem menuItemSeleccionarTodo = new MenuItem("Seleccionar Todo");
 
+    private final SeparatorMenuItem separator = new SeparatorMenuItem();
+
+/*
     public BarraMenu() {
 
         menuArchivo.getItems().addAll(menuItemAbrirArchivo, menuItemAbrirCarpeta, menuItemGuardar, menuItemGuardarComo, menuItemSalir);
+        menuEdicion.getItems().addAll(menuItemDeshacer, menuItemCortar, menuItemCopiar,menuItemPegar, menuItemEliminar, menuItemBuscar, menuItemSeleccionarTodo);
+
+
         this.getMenus().addAll(menuArchivo, menuEdicion, menuVer, menuAyuda);
 
-    }
 
+    }
+*/
 
     public BarraMenu(Ide ide) {
-        menuArchivo.getItems().addAll(menuItemAbrirArchivo, menuItemAbrirCarpeta, menuItemGuardar, menuItemGuardarComo, menuItemSalir);
+        menuArchivo.getItems().addAll(menuItemAbrirArchivo, menuItemAbrirCarpeta, menuItemGuardar, menuItemGuardarComo, new SeparatorMenuItem(),
+                menuItemSalir);
+        menuEdicion.getItems().addAll(menuItemDeshacer, new SeparatorMenuItem(),
+                menuItemCortar, menuItemCopiar,menuItemPegar, menuItemEliminar, new SeparatorMenuItem(),
+                menuItemBuscar, new SeparatorMenuItem(),
+                menuItemSeleccionarTodo);
+
         this.getMenus().addAll(menuArchivo, menuEdicion, menuVer, menuAyuda);
        // ControladoresMenu controladoresMenu = new ControladoresMenu(ide);
 
@@ -81,6 +102,34 @@ public class BarraMenu extends MenuBar {
 
     public MenuItem getMenuItemSalir() {
         return menuItemSalir;
+    }
+
+    public MenuItem getMenuItemCortar() {
+        return menuItemCortar;
+    }
+
+    public MenuItem getMenuItemDeshacer() {
+        return menuItemDeshacer;
+    }
+
+    public MenuItem getMenuItemCopiar() {
+        return menuItemCopiar;
+    }
+
+    public MenuItem getMenuItemPegar() {
+        return menuItemPegar;
+    }
+
+    public MenuItem getMenuItemEliminar() {
+        return menuItemEliminar;
+    }
+
+    public MenuItem getMenuItemBuscar() {
+        return menuItemBuscar;
+    }
+
+    public MenuItem getMenuItemSeleccionarTodo() {
+        return menuItemSeleccionarTodo;
     }
 
     public MenuBar getBarraMenu() {

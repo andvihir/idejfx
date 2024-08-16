@@ -2,11 +2,14 @@ package com.ide.proyectos;
 
 import com.dlsc.formsfx.model.validators.CustomValidator;
 import com.dlsc.formsfx.model.validators.DoubleRangeValidator;
+import com.ide.controladores.ControladorBarraDirectorios;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
+
+import java.beans.EventHandler;
 
 public class BarraDirectorios extends ScrollPane {
     public BarraDirectorios() {
@@ -38,5 +41,10 @@ public class BarraDirectorios extends ScrollPane {
         menuContextoInicial.getItems().addAll(nuevoProyecto, abrirProyectoExistente);
         this.setContextMenu(menuContextoInicial);
 
+        //TODO HACER METODOS
+        nuevoProyecto.setOnAction(e -> {
+            ControladorBarraDirectorios.crearNuevoProyecto();
+                }
+        );
     }
 }

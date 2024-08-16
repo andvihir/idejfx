@@ -1,6 +1,7 @@
 package com.ide.pestanas;
 
 import com.ide.controladores.ControladorMenu;
+import com.ide.editor.EditorJava;
 import com.ide.editor.EditorSimple;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -63,13 +64,46 @@ public class PanelPestanya extends TabPane {
 
         controlPestanya(pestana);
     }
+    public void abrirPestana(EditorSimple editor, String nombre, File archivo){
+        Pestanya pestana = new Pestanya(nombre, editor, this, archivo);
+        pestana.setContent(editor);
+        //pestana.setContent();
+        this.getTabs().add(pestana);
+        this.setPestanyaSeleccionada(pestana);
+        this.getSelectionModel().select(pestana);
+
+        controlPestanya(pestana);
+    }
+
 
     public void cerrarPestana(EditorSimple editor, Tab tab) {
         this.getTabs().remove(tab);
+        if(editor instanceof EditorJava){
+            ((EditorJava) editor).cerrarEditorJava();
+        }
+    }
+
+    public void cerrarYGuardarTodasPestanas() throws IOException {
+        for(Tab t : this.getTabs()){
+            if(t instanceof Pestanya){
+                if(((Pestanya) t).getEditor().getModificado()) {
+                    guardarArchivo(((Pestanya) t).getEditor().getArchivoReferencia(), (Pestanya) t);
+                }
+                /*
+                //EditorSimple editor = ((Pestanya) t).getEditor();
+
+                if(editor instanceof EditorJava){
+                    ((EditorJava) editor).cerrarEditorJava();
+                }*/
+            }
+        }
+        this.getTabs().removeAll();
     }
 
     public Pestanya getPestanyaSeleccionada(){
-        return this.pestanyaSeleccionada;
+        if(this.pestanyaSeleccionada == null){
+            return null;
+        }else return this.pestanyaSeleccionada;
     }
     private void setPestanyaSeleccionada(Pestanya tab){
         this.pestanyaSeleccionada = tab;
@@ -88,6 +122,12 @@ public class PanelPestanya extends TabPane {
         });
 
         pestana.setOnCloseRequest((Event event) -> {
+            //TODO HACER SOLO SI HAY CAMBIO REALIZADO
+            if(!pestana.getEditor().getModificado()) {
+                pestana.getPanelPestanya().cerrarPestana(pestana.getEditor(), pestana);
+                return;
+            }
+
             Alert alert = new Alert(Alert.AlertType.WARNING,null, ButtonType.YES, ButtonType.NO, ButtonType.CANCEL );
             alert.setTitle("Cerrar pestaña");
             alert.setHeaderText("¿Desea guardar los cambios efectuados en '"+pestana.getText()+"'?");
@@ -124,6 +164,33 @@ public class PanelPestanya extends TabPane {
         System.out.println("Guardado con éxito.");
     }
 
+    public boolean estaArchivoYaAbierto(File archivo){
+        for(Tab p : this.getTabs()){
+            if(p instanceof Pestanya){
+                if(((Pestanya) p).getArchivo().getAbsolutePath().equals(archivo.getAbsolutePath())){
 
+                    this.setPestanyaSeleccionada((Pestanya)  p);
+                    this.getSelectionModel().select((Pestanya)  p);
+
+                    controlPestanya((Pestanya)  p);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean hayCambio() {
+        boolean hayCambio = false;
+        for (Tab t : this.getTabs()) {
+            if (t instanceof Pestanya) {
+                if (((Pestanya) t).getEditor().getModificado()){
+                    hayCambio = true;
+                    return hayCambio;
+            }
+        }
+    }
+        return hayCambio;
+    }
 
 }
