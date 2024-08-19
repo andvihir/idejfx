@@ -4,29 +4,31 @@ import com.ide.Ide;
 import com.ide.editor.EditorJava;
 import com.ide.editor.EditorSimple;
 import com.ide.menu.BarraMenu;
+import com.ide.menu.DialogoNuevoProyecto;
 import com.ide.proyectos.MenuContextualDirectorios;
 import com.ide.proyectos.TreeDirectorios;
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javafx.stage.*;
+import javafx.util.Pair;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.time.Duration;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
@@ -40,7 +42,6 @@ public class ControladorMenu {
     public ControladorMenu(Ide ide) {
         this.ide = ide;
         this.barraMenu = ide.getBarraMenu();
-
 
 
         //----- EVENTOS BARRA DE MENU -----
@@ -67,37 +68,23 @@ public class ControladorMenu {
             }
         });
 
-        barraMenu.getMenuItemAbrirCarpeta().setOnAction(e -> {
-            DirectoryChooser directoryChooser = new DirectoryChooser();
-            directoryChooser.setTitle("Abrir Carpeta");
-            directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-            File archivo = directoryChooser.showDialog(null);
-            if (archivo != null) {
-                try {
-                    // VistaDirectorios vistaDirectorios = new VistaDirectorios(archivo, archivo.getName());
-                    this.ide.setTreeDirectorios(new TreeDirectorios(archivo, archivo.getName()));
-                    /*
-                    panelVistaDirectorios.getChildren().add(vistaDirectorios);
-                    splitPaneH.getItems().addFirst(panelVistaDirectorios);
-                    splitPaneV.getItems().addAll(splitPaneH);
-                    */
-
-                    this.ide.getBarraDirectorios().setContent(this.ide.getTreeDirectorios());
-                    this.ide.getBarraDirectorios().setContextMenu(new MenuContextualDirectorios());
-                    //this.getPanelDirectorios().autosize();
-
-                    // scrollPane.maxHeight()
-                    //setLeft(scrollPane);
-                } catch (Exception ignored) {
-                    System.out.println(ignored);
-                }
-            }
-
+        barraMenu.getMenuItemNuevoProyecto().setOnAction(e -> {
+            //TODO nuevo proyecto : crear carpeta proyecto y demas -> llamar metodo nuevoproeycto
+            handlerCerrarProyecto(e);
+            Boolean creado = crearNuevoProyecto(this.ide);
+            if (creado) this.ide.setVistaTotal();
 
         });
 
+        barraMenu.getMenuItemAbrirProyecto().setOnAction(e -> {
+
+            handlerCerrarProyecto(e);
+            abrirProyectoExistente(this.ide);
+            this.ide.setVistaTotal();
+        });
+
         barraMenu.getMenuItemGuardar().setOnAction(e -> {
-            if(this.ide.getEditor()==null) return;
+            if (this.ide.getEditor() == null) return;
 
             if (this.ide.getEditor().getArchivoReferencia() != null) {
                 try {
@@ -128,7 +115,7 @@ public class ControladorMenu {
         });
 
         barraMenu.getMenuItemGuardarComo().setOnAction(e -> {
-            if(this.ide.getEditor()==null) return;
+            if (this.ide.getEditor() == null) return;
 
             FileChooser fileChooser = new FileChooser();
             //only allow text files to be selected using chooser
@@ -153,6 +140,13 @@ public class ControladorMenu {
                     throw new RuntimeException(ex);
 
                 }
+            }
+        });
+
+        barraMenu.getMenuItemCerrarProyecto().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                handlerCerrarProyecto(event);
             }
         });
 
@@ -291,5 +285,97 @@ public class ControladorMenu {
         });
     }
 
+    public static boolean crearNuevoProyecto(Ide ide){
+        AtomicReference<Boolean> r = new AtomicReference<>(false);
+        DialogoNuevoProyecto dialogoNuevoProyecto = new DialogoNuevoProyecto();
+        Optional<Pair<String, String>>  result = dialogoNuevoProyecto.showAndWait();
+        result.ifPresent( nombreYRuta ->{
+            r.set(true);
+            System.out.println("nombreProyecto= "+nombreYRuta.getKey() + ", ruta = "+nombreYRuta.getValue());
+            String nombreProyecto = nombreYRuta.getKey();
+            String ruta = nombreYRuta.getValue();
+            String rutaFinal = ruta+"\\"+nombreProyecto;
+            File archivo = new File(rutaFinal);
+            boolean creado = archivo.mkdirs();
+            if(creado) {
+                ide.setTreeDirectorios(new TreeDirectorios(archivo, archivo.getName()));
+                ide.getBarraDirectorios().setContent(ide.getTreeDirectorios());
+                ide.getBarraDirectorios().setContextMenu(new MenuContextualDirectorios());
+                ide.hayProyectoAbierto().set(true);
+            }
+        });
+        return r.get();
+    }
+
+    public static boolean abrirProyectoExistente(Ide ide){
+        boolean r = false;
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Abrir Carpeta");
+        directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        File archivo = directoryChooser.showDialog(null);
+        if (archivo != null) {
+            try {
+                // VistaDirectorios vistaDirectorios = new VistaDirectorios(archivo, archivo.getName());
+                ide.setTreeDirectorios(new TreeDirectorios(archivo, archivo.getName()));
+                    /*
+                    panelVistaDirectorios.getChildren().add(vistaDirectorios);
+                    splitPaneH.getItems().addFirst(panelVistaDirectorios);
+                    splitPaneV.getItems().addAll(splitPaneH);
+                    */
+
+                ide.getBarraDirectorios().setContent(ide.getTreeDirectorios());
+                ide.getBarraDirectorios().setContextMenu(new MenuContextualDirectorios());
+                //this.getPanelDirectorios().autosize();
+                r = true;
+                ide.hayProyectoAbierto().set(true);
+                // scrollPane.maxHeight()
+                //setLeft(scrollPane);
+            } catch (Exception ignored) {
+                System.out.println(ignored);
+            }
+        }
+        return r;
+    }
+
+    private void handlerCerrarProyecto(ActionEvent event){
+        if(ide.hayProyectoAbierto().getValue()) { //HAY PROYECTO ABIERTO
+            if (ide.getPanelPestanya().getTabs().isEmpty() || !ide.getPanelPestanya().hayCambio()) {
+                Alert alert = new Alert(Alert.AlertType.WARNING, null, ButtonType.YES, ButtonType.CANCEL);
+                alert.setTitle("Cerrar");
+                alert.setHeaderText("¿Desea cerrar el proyecto?");
+                ((Button) alert.getDialogPane().lookupButton(ButtonType.YES)).setText("Cerrar");
+                ((Button) alert.getDialogPane().lookupButton(ButtonType.CANCEL)).setText("Cancelar");
+                Optional<ButtonType> resultado = alert.showAndWait();
+                if (resultado.isPresent() && resultado.get() == ButtonType.YES) {
+                    ide.cerrarProyecto();
+                } else {
+                    event.consume();
+                }
+            } else if (ide.getPanelPestanya().hayCambio()) {
+                Alert alert = new Alert(Alert.AlertType.WARNING, null, ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+                alert.setTitle("Salir");
+                alert.setHeaderText("¿Desea guardar los cambios realizados y cerrar el proyecto?");
+                ((Button) alert.getDialogPane().lookupButton(ButtonType.YES)).setText("Guardar");
+                ((Button) alert.getDialogPane().lookupButton(ButtonType.NO)).setText("No guardar");
+                ((Button) alert.getDialogPane().lookupButton(ButtonType.CANCEL)).setText("Cancelar");
+                Optional<ButtonType> resultado = alert.showAndWait();
+                if (resultado.isPresent() && resultado.get() == ButtonType.YES) {
+                    try {
+                        ide.cerrarYGuardar();
+                        ide.cerrarProyecto();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else if (resultado.isPresent() && resultado.get() == ButtonType.NO) {
+                    ide.cerrarProyecto();
+                } else {
+                    event.consume();
+                }
+            }
+        }else{
+            event.consume();
+        }
+
+    }
 
 }

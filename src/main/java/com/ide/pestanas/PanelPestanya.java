@@ -4,6 +4,7 @@ import com.ide.controladores.ControladorMenu;
 import com.ide.editor.EditorJava;
 import com.ide.editor.EditorSimple;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -14,6 +15,7 @@ import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.*;
+import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 
 import java.awt.event.WindowEvent;
@@ -36,6 +38,7 @@ public class PanelPestanya extends TabPane {
         this.pestanyaSeleccionada.addListener((propiedad, oldValue, newValue) -> {});
     }
     */
+    private SimpleBooleanProperty hayPestanaAbierta = new SimpleBooleanProperty(false);
 
     private final AnchorPane panelContenido = new AnchorPane();
     private final ObservableList<Pestanya> pestanyas = FXCollections.observableArrayList();
@@ -63,16 +66,22 @@ public class PanelPestanya extends TabPane {
         this.getSelectionModel().select(pestana);
 
         controlPestanya(pestana);
+        hayPestanaAbierta.set(true);
     }
     public void abrirPestana(EditorSimple editor, String nombre, File archivo){
         Pestanya pestana = new Pestanya(nombre, editor, this, archivo);
-        pestana.setContent(editor);
-        //pestana.setContent();
+
+        VirtualizedScrollPane<CodeArea> editorView = new VirtualizedScrollPane<>(editor);
+
+        pestana.setContent(editorView);
+
         this.getTabs().add(pestana);
         this.setPestanyaSeleccionada(pestana);
         this.getSelectionModel().select(pestana);
 
         controlPestanya(pestana);
+        hayPestanaAbierta.set(true);
+
     }
 
 
@@ -81,6 +90,7 @@ public class PanelPestanya extends TabPane {
         if(editor instanceof EditorJava){
             ((EditorJava) editor).cerrarEditorJava();
         }
+        if(this.getTabs().isEmpty()) hayPestanaAbierta.set(false);
     }
 
     public void cerrarYGuardarTodasPestanas() throws IOException {
@@ -98,6 +108,7 @@ public class PanelPestanya extends TabPane {
             }
         }
         this.getTabs().removeAll();
+        hayPestanaAbierta.set(false);
     }
 
     public Pestanya getPestanyaSeleccionada(){
@@ -138,6 +149,7 @@ public class PanelPestanya extends TabPane {
             if(resultado.isPresent() && resultado.get() == ButtonType.YES){
                 try {
                     guardarArchivo(pestana.getEditor().getArchivoReferencia(), pestana);
+                    pestana.getPanelPestanya().cerrarPestana(pestana.getEditor(), pestana);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -146,6 +158,7 @@ public class PanelPestanya extends TabPane {
             }else {
                 event.consume();
             }
+
         });
 
     }
@@ -193,4 +206,7 @@ public class PanelPestanya extends TabPane {
         return hayCambio;
     }
 
+    public SimpleBooleanProperty hayPestanaAbierta(){
+        return hayPestanaAbierta;
+    }
 }

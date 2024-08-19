@@ -6,4 +6,6 @@ public class ControladorBarraDirectorios {
     public static void crearNuevoProyecto(){
 
     }
+
+    //TODO HACER METODOS PARA LA BARRA MANEJANDO LOS ARCHIVOS -> EN PLAN CORTAR, COPIAR, PEGAR, NUEVA CARPETA/PAQUETE, NUEVA CLASE ETC
 }

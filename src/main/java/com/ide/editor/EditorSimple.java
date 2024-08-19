@@ -39,7 +39,7 @@ public class EditorSimple extends CodeArea {
         super();
         this.setParagraphGraphicFactory(LineNumberFactory.get(this));
 
-
+    /*
         this.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
@@ -48,7 +48,7 @@ public class EditorSimple extends CodeArea {
 
             }
         });
-
+*/
         //-----**** MENU CONTEXTUAL ****-----
         MenuContextualEditor menuContextualEditor = new MenuContextualEditor(this);
 
@@ -81,6 +81,7 @@ public class EditorSimple extends CodeArea {
         while (matcher.find()){
             if(contador == indiceNuevo){
                 this.selectRange(matcher.start(), matcher.end());
+                this.showParagraphAtTop(this.getCurrentParagraph());
                 indice.set(indiceNuevo);
                 break;
             }
@@ -91,6 +92,7 @@ public class EditorSimple extends CodeArea {
             matcher = pattern.matcher(getText());
             if(matcher.find()){
             this.selectRange(matcher.start(), matcher.end());
+                this.showParagraphAtTop(this.getCurrentParagraph());
             indice.set(0);}
         }
     }

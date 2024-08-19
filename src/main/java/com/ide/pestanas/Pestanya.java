@@ -1,6 +1,7 @@
 package com.ide.pestanas;
 
 import com.ide.editor.EditorSimple;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.Pane;
 

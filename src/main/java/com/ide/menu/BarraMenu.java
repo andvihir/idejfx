@@ -1,23 +1,10 @@
 package com.ide.menu;
 
 import com.ide.Ide;
-import com.ide.proyectos.MenuContextualDirectorios;
-import com.ide.proyectos.TreeDirectorios;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.input.KeyCombination;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
-
-import java.io.*;
-import java.nio.file.Files;
-import java.util.Optional;
-import java.util.logging.Logger;
-import java.util.stream.Stream;
-
-import static java.util.logging.Level.SEVERE;
 
 public class BarraMenu extends MenuBar {
     private final Menu menuArchivo = new Menu("Archivo");
@@ -26,9 +13,11 @@ public class BarraMenu extends MenuBar {
     private final Menu menuAyuda = new Menu("Ayuda");
 
     private final MenuItem menuItemAbrirArchivo = new MenuItem("Abrir archivo");
-    private final MenuItem menuItemAbrirCarpeta = new MenuItem("Abrir carpeta");
+    private final MenuItem menuItemNuevoProyecto = new MenuItem("Nuevo proyecto...");
+    private final MenuItem menuItemAbrirProyecto = new MenuItem("Abrir proyecto...");
     private final MenuItem menuItemGuardar = new MenuItem("Guardar");
     private final MenuItem menuItemGuardarComo = new MenuItem("Guardar como...");
+    private final MenuItem menuItemCerrarProyecto = new MenuItem("Cerrar Proyecto");
     private final MenuItem menuItemSalir = new MenuItem("Salir");
 
     private final MenuItem menuItemDeshacer = new MenuItem("Deshacer");
@@ -55,14 +44,37 @@ public class BarraMenu extends MenuBar {
 */
 
     public BarraMenu(Ide ide) {
-        menuArchivo.getItems().addAll(menuItemAbrirArchivo, menuItemAbrirCarpeta, menuItemGuardar, menuItemGuardarComo, new SeparatorMenuItem(),
+        menuArchivo.getItems().addAll(menuItemAbrirArchivo, menuItemNuevoProyecto, menuItemAbrirProyecto, menuItemGuardar, menuItemGuardarComo, new SeparatorMenuItem(),
+                menuItemCerrarProyecto, new SeparatorMenuItem(),
                 menuItemSalir);
         menuEdicion.getItems().addAll(menuItemDeshacer, new SeparatorMenuItem(),
                 menuItemCortar, menuItemCopiar,menuItemPegar, menuItemEliminar, new SeparatorMenuItem(),
                 menuItemBuscar, new SeparatorMenuItem(),
                 menuItemSeleccionarTodo);
 
+        //PROPIEDADES INICIALES
+        menuItemGuardar.setDisable(true);
+        menuItemAbrirArchivo.setVisible(false);
+        menuItemGuardarComo.setDisable(true);
+        menuItemCerrarProyecto.setDisable(true);
+        menuEdicion.setDisable(true);
+
+
+
         this.getMenus().addAll(menuArchivo, menuEdicion, menuVer, menuAyuda);
+
+        ide.hayProyectoAbierto().addListener( (obs, oldVal, newVal) -> {
+            //menuEdicion.setDisable(!newVal);
+            menuItemSalir.setDisable(!newVal);
+            menuItemAbrirArchivo.setVisible(newVal);
+            menuItemCerrarProyecto.setDisable(!newVal);
+            menuEdicion.setDisable(!newVal);
+        });
+
+        ide.hayPestanaAbierta().addListener( (obs, oldVal, newVal) ->{
+            menuEdicion.setDisable(!newVal);
+        });
+
        // ControladoresMenu controladoresMenu = new ControladoresMenu(ide);
 
 
@@ -88,8 +100,8 @@ public class BarraMenu extends MenuBar {
         return menuItemAbrirArchivo;
     }
 
-    public MenuItem getMenuItemAbrirCarpeta() {
-        return menuItemAbrirCarpeta;
+    public MenuItem getMenuItemAbrirProyecto() {
+        return menuItemAbrirProyecto;
     }
 
     public MenuItem getMenuItemGuardar() {
@@ -130,6 +142,14 @@ public class BarraMenu extends MenuBar {
 
     public MenuItem getMenuItemSeleccionarTodo() {
         return menuItemSeleccionarTodo;
+    }
+
+    public MenuItem getMenuItemNuevoProyecto() {
+        return menuItemNuevoProyecto;
+    }
+
+    public MenuItem getMenuItemCerrarProyecto() {
+        return menuItemCerrarProyecto;
     }
 
     public MenuBar getBarraMenu() {

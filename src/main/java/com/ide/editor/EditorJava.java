@@ -108,6 +108,7 @@ public class EditorJava extends EditorSimple{
     }
     public EditorJava(String text){
         super(text);
+
         executor = Executors.newSingleThreadExecutor();
         //this.getStylesheets().add(Java.class.getResource(("java-keywords.css")).toExternalForm());
         //this.getStylesheets().add(getClass().getResource("java-keywords.css").toExternalForm());

@@ -4,6 +4,8 @@ import com.ide.editor.EditorJava;
 import com.ide.editor.fuentes.Fuentes;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -21,6 +23,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
 
         /*
         FXMLLoader loader = new FXMLLoader(getClass().getResource("mainold.fxml"));
@@ -51,14 +54,15 @@ public class Main extends Application {
        // root.getChildren().add(tabPane);
 
         ide.getStyleClass().add("ide");
-        Scene scene = new Scene(ide, 1280, 1024);
+        Scene scene = new Scene(ide, 800, 600);
 
         //scene.getStylesheets().add(Java.class.getResource("java-keywords.css").toExternalForm());
         //scene.getStylesheets().add(Java.class.getResource("java-keywords.css").toExternalForm());
         ide.getStylesheets().add(EditorJava.class.getResource("java-keywords.css").toExternalForm());
         Fuentes.cargarFuentes();
 
-        primaryStage.setMaximized(true);
+
+        //primaryStage.setMaximized(true);
         primaryStage.setScene(scene);
         primaryStage.setTitle("IDE Java UNED");
         primaryStage.show();
