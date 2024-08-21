@@ -5,11 +5,8 @@ import com.ide.editor.EditorJava;
 import com.ide.editor.EditorSimple;
 import com.ide.menu.BarraMenu;
 import com.ide.menu.DialogoNuevoProyecto;
-import com.ide.proyectos.MenuContextualDirectorios;
 import com.ide.proyectos.TreeDirectorios;
-import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -19,7 +16,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.*;
@@ -47,11 +43,12 @@ public class ControladorMenu {
         //----- EVENTOS BARRA DE MENU -----
         barraMenu.getMenuItemSalir().setOnAction(e -> System.exit(0));
 
-        barraMenu.getMenuItemAbrirArchivo().setOnAction(e -> {
+        barraMenu.getMenuItemNuevaClaseDesdeArchivo().setOnAction(e -> {
             FileChooser fileChooser = new FileChooser();
             //only allow text files to be selected using chooser
             fileChooser.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter("Text files (*.txt)", "*.txt", "*.java")
+                   // new FileChooser.ExtensionFilter("Text files (*.txt)", "*.txt", "*.java")
+                    new FileChooser.ExtensionFilter("*.java")
             );
             //set initial directory somewhere user will recognise
             fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
@@ -67,10 +64,17 @@ public class ControladorMenu {
                 }
             }
         });
+        barraMenu.getMenuItemNuevoPaquete().setOnAction(e ->{
+            Stage nuevaVentana = new Stage();
+            Scene nuevaEscena = new Scene(new VBox(), 1024, 768);
+            nuevaVentana.setScene(nuevaEscena);
+            nuevaVentana.show();
+        });
 
         barraMenu.getMenuItemNuevoProyecto().setOnAction(e -> {
             //TODO nuevo proyecto : crear carpeta proyecto y demas -> llamar metodo nuevoproeycto
             handlerCerrarProyecto(e);
+            if(this.ide.hayProyectoAbierto().getValue()) return;
             Boolean creado = crearNuevoProyecto(this.ide);
             if (creado) this.ide.setVistaTotal();
 
@@ -79,8 +83,10 @@ public class ControladorMenu {
         barraMenu.getMenuItemAbrirProyecto().setOnAction(e -> {
 
             handlerCerrarProyecto(e);
-            abrirProyectoExistente(this.ide);
-            this.ide.setVistaTotal();
+            if(!ide.hayProyectoAbierto().getValue()){
+                abrirProyectoExistente(this.ide);
+                this.ide.setVistaTotal();
+            }
         });
 
         barraMenu.getMenuItemGuardar().setOnAction(e -> {
@@ -104,8 +110,6 @@ public class ControladorMenu {
                 if (archivoGuardar != null) {
                     try {
                         guardarArchivo(archivoGuardar);
-                        this.ide.getEditor().setArchivoReferencia(archivoGuardar);
-                        this.ide.getEditor().setModificado(false);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -131,8 +135,7 @@ public class ControladorMenu {
                     //TODO hacer con que cambie el nombre de la pestaña cuando guarda como nuevo archivo y cambiar el editor
 
                     guardarArchivo(archivoGuardar);
-                    this.ide.getEditor().setArchivoReferencia(archivoGuardar);
-                    this.ide.getEditor().setModificado(false);
+                    this.ide.getPanelPestanya().getPestanyaSeleccionada().setArchivo(archivoGuardar);
                     this.ide.getPanelPestanya().getPestanyaSeleccionada().setText(archivoGuardar.getName());
 
                 } catch (IOException ex) {
@@ -180,7 +183,7 @@ public class ControladorMenu {
         });
 
         //----- ACELERADORES-----
-        barraMenu.getMenuItemAbrirArchivo().setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
+        //barraMenu.getMenuItemNuevaClaseDesdeArchivo().setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
         barraMenu.getMenuItemGuardar().setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
         barraMenu.getMenuItemSalir().setAccelerator(KeyCombination.keyCombination("Ctrl+Q"));
 
@@ -193,7 +196,7 @@ public class ControladorMenu {
 
     }
 
-    private void cargarArchivoAEditor(File archivo, boolean subrayadoJava) throws IOException {
+    public void cargarArchivoAEditor(File archivo, boolean subrayadoJava) throws IOException {
         if(this.ide.getPanelPestanya().estaArchivoYaAbierto(archivo)) return;
 
         BufferedReader texto = new BufferedReader(new FileReader(archivo));
@@ -229,20 +232,22 @@ public class ControladorMenu {
             subscribe(editorSimple);
 
         }
-
         //this.ide.getEditor().replaceText(archivoTotal.toString());
     }
 
-    private void guardarArchivo(File archivoReferencia) throws IOException {
+    public void guardarArchivo(File archivoReferencia) throws IOException {
 
         FileWriter myWriter = new FileWriter(archivoReferencia);
         myWriter.write(this.ide.getEditor().getText());
         myWriter.close();
+
+        //this.ide.getEditor().setArchivoReferencia(archivoGuardar);
+        this.ide.getEditor().setModificado(false);
         // lastModifiedTime = FileTime.fromMillis(System.currentTimeMillis() + 3000);
         System.out.println("Guardado con éxito.");
     }
 
-    private Optional<String> getExtensionArchivo(String filename) {
+    public static Optional<String> getExtensionArchivo(String filename) {
         return Optional.ofNullable(filename)
                 .filter(f -> f.contains("."))
                 .map(f -> f.substring(filename.lastIndexOf(".") + 1));
@@ -298,9 +303,8 @@ public class ControladorMenu {
             File archivo = new File(rutaFinal);
             boolean creado = archivo.mkdirs();
             if(creado) {
-                ide.setTreeDirectorios(new TreeDirectorios(archivo, archivo.getName()));
+                ide.setTreeDirectorios(new TreeDirectorios(archivo, ide));
                 ide.getBarraDirectorios().setContent(ide.getTreeDirectorios());
-                ide.getBarraDirectorios().setContextMenu(new MenuContextualDirectorios());
                 ide.hayProyectoAbierto().set(true);
             }
         });
@@ -316,7 +320,7 @@ public class ControladorMenu {
         if (archivo != null) {
             try {
                 // VistaDirectorios vistaDirectorios = new VistaDirectorios(archivo, archivo.getName());
-                ide.setTreeDirectorios(new TreeDirectorios(archivo, archivo.getName()));
+                ide.setTreeDirectorios(new TreeDirectorios(archivo, ide));
                     /*
                     panelVistaDirectorios.getChildren().add(vistaDirectorios);
                     splitPaneH.getItems().addFirst(panelVistaDirectorios);
@@ -324,7 +328,6 @@ public class ControladorMenu {
                     */
 
                 ide.getBarraDirectorios().setContent(ide.getTreeDirectorios());
-                ide.getBarraDirectorios().setContextMenu(new MenuContextualDirectorios());
                 //this.getPanelDirectorios().autosize();
                 r = true;
                 ide.hayProyectoAbierto().set(true);

@@ -1,9 +1,8 @@
 package com.ide.menu;
 
+import com.ide.Ide;
 import com.ide.proyectos.TreeDirectorios;
 import javafx.application.Platform;
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -15,24 +14,30 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class DialogoNuevoProyecto extends Dialog<Pair<String, String>>{
+public class DialogoNuevaClaseDesdeArchivo extends Dialog<File>{
+
 
     private final ButtonType aceptarButtonType = new ButtonType("Aceptar", ButtonBar.ButtonData.OK_DONE);
     private final ButtonType cancelarButtonType = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
     private final GridPane grid = new GridPane();
+    private Ide ide;
+    private TreeDirectorios treeDirectorios;
 
-    public DialogoNuevoProyecto(){
+    public DialogoNuevaClaseDesdeArchivo(Ide ide) {
+
+        this.ide = ide;
+        this.treeDirectorios = ide.getTreeDirectorios();
 
         //<Pair<String, String>> dialogo = new Dialog<>();
 
-        this.setTitle("Nuevo Proyecto");
+        this.setTitle("Nueva Clase desde Archivo");
         //dialogo.setHeaderText("Nuevo Proyecto");
 
-       // ButtonType aceptarButtonType = new ButtonType("Aceptar", ButtonBar.ButtonData.OK_DONE);
-       // ButtonType cancelarButtonType = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+        // ButtonType aceptarButtonType = new ButtonType("Aceptar", ButtonBar.ButtonData.OK_DONE);
+        // ButtonType cancelarButtonType = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
         this.getDialogPane().getButtonTypes().addAll(aceptarButtonType, cancelarButtonType);
 
-       // GridPane grid = new GridPane();
+        // GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20, 150, 10, 10));
@@ -58,9 +63,9 @@ public class DialogoNuevoProyecto extends Dialog<Pair<String, String>>{
         // ubicacionNoExiste.visibleProperty().bind(ubicacion.textProperty().);
 
 
-        Button elegirBoton  = new Button("Elegir...");
+        Button elegirBoton = new Button("Elegir...");
 
-        elegirBoton.setOnAction( e -> {
+        elegirBoton.setOnAction(e -> {
             String ruta = getRutaSeleccion(ubicacion.getText());
             ubicacion.setText(ruta);
         });
@@ -70,7 +75,7 @@ public class DialogoNuevoProyecto extends Dialog<Pair<String, String>>{
         grid.add(new Label("Ubicacion:"), 0, 1);
         grid.add(ubicacion, 1, 1);
         grid.add(elegirBoton, 2, 1);
-        grid.add(destino, 0,2);
+        grid.add(destino, 0, 2);
         grid.add(destinoRuta, 1, 2);
         grid.add(ubicacionNoExiste, 0, 3);
         grid.add(carpetaProyectoYaExiste, 0, 4);
@@ -79,14 +84,14 @@ public class DialogoNuevoProyecto extends Dialog<Pair<String, String>>{
         aceptarBoton.setDisable(true);
 
         nombre.textProperty().addListener((observable, oldValue, newValue) -> {
-            destinoRuta.setText(ubicacion.getText()+"\\"+newValue);
+            destinoRuta.setText(ubicacion.getText() + "\\" + newValue);
             carpetaProyectoYaExiste.setVisible(!newValue.trim().isEmpty() && Files.isDirectory(Paths.get(destinoRuta.getText())));
-            aceptarBoton.setDisable(newValue.trim().isEmpty() || ubicacionNoExiste.isVisible() || Files.isDirectory(Paths.get(destinoRuta.getText())) );
+            aceptarBoton.setDisable(newValue.trim().isEmpty() || ubicacionNoExiste.isVisible() || Files.isDirectory(Paths.get(destinoRuta.getText())));
         });
 
         ubicacion.textProperty().addListener((observable, oldValue, newValue) -> {
             ubicacionNoExiste.setVisible(!Files.isDirectory(Paths.get(newValue)));
-            destinoRuta.setText(newValue+"\\"+nombre.getText());
+            destinoRuta.setText(newValue + "\\" + nombre.getText());
             aceptarBoton.setDisable(!Files.isDirectory(Paths.get(newValue)) || Files.isDirectory(Paths.get(destinoRuta.getText())));
             carpetaProyectoYaExiste.setVisible(!nombre.getText().trim().isEmpty() && Files.isDirectory(Paths.get(destinoRuta.getText())));
         });
@@ -100,23 +105,23 @@ public class DialogoNuevoProyecto extends Dialog<Pair<String, String>>{
         this.getDialogPane().setContent(grid);
         Platform.runLater(() -> nombre.requestFocus());
 
-        this.setResultConverter(dialogoBoton ->{
-            if(dialogoBoton == aceptarButtonType){
-                return new Pair<>(nombre.getText(), ubicacion.getText());
+        this.setResultConverter(dialogoBoton -> {
+            if (dialogoBoton == aceptarButtonType) {
+                //return new Pair<>(nombre.getText(), ubicacion.getText());
             }
             return null;
         });
     }
 
-    private String getRutaSeleccion(String directorioTextField){
-        String result=directorioTextField;
+    private String getRutaSeleccion(String directorioTextField) {
+        String result = directorioTextField;
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle("Abrir Carpeta");
 
         //TODO comprobar
-        if(!directorioTextField.isEmpty() && Files.isDirectory(Paths.get(directorioTextField)) ){
+        if (!directorioTextField.isEmpty() && Files.isDirectory(Paths.get(directorioTextField))) {
             directoryChooser.setInitialDirectory(Paths.get(directorioTextField).toFile());
-        }else{
+        } else {
             directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         }
         /*
@@ -136,5 +141,4 @@ public class DialogoNuevoProyecto extends Dialog<Pair<String, String>>{
         }
         return result;
     }
-
 }

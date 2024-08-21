@@ -54,7 +54,7 @@ public class Main extends Application {
        // root.getChildren().add(tabPane);
 
         ide.getStyleClass().add("ide");
-        Scene scene = new Scene(ide, 800, 600);
+        Scene scene = new Scene(ide, 1024, 768);
 
         //scene.getStylesheets().add(Java.class.getResource("java-keywords.css").toExternalForm());
         //scene.getStylesheets().add(Java.class.getResource("java-keywords.css").toExternalForm());

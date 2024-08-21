@@ -46,7 +46,7 @@ public class Ide extends BorderPane{
     private PanelPestanya panelPestanya = new PanelPestanya();
 
 
-    private BarraDirectorios barraDirectorios = new BarraDirectorios();
+    private BarraDirectorios barraDirectorios = new BarraDirectorios(this);
     private TreeDirectorios treeDirectorios;
     private ControladorMenu controladorMenu = new ControladorMenu(this);
 
@@ -260,4 +260,7 @@ public class Ide extends BorderPane{
         }
     }
 
+    public ControladorMenu getControladorMenu() {
+        return controladorMenu;
+    }
 }

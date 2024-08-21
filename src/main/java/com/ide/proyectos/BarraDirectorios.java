@@ -2,6 +2,7 @@ package com.ide.proyectos;
 
 import com.dlsc.formsfx.model.validators.CustomValidator;
 import com.dlsc.formsfx.model.validators.DoubleRangeValidator;
+import com.ide.Ide;
 import com.ide.controladores.ControladorBarraDirectorios;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -15,11 +16,15 @@ import javafx.scene.layout.VBox;
 import java.beans.EventHandler;
 
 public class BarraDirectorios extends ScrollPane {
-    public BarraDirectorios() {
+    private TreeDirectorios.MenuContextualDirectorios menuContextoDirectorios;
+
+    public BarraDirectorios(Ide ide) {
         this.setFitToHeight(true);
         this.setFitToWidth(true);
         this.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         this.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        this.menuContextoDirectorios = new TreeDirectorios.MenuContextualDirectorios(ide);
+        this.setContextMenu(this.menuContextoDirectorios);
 
         //inicio();
       // this.setContextMenu(new MenuContextualDirectorios());

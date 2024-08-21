@@ -42,6 +42,7 @@ public class EditorJava extends EditorSimple{
     private static final String LLAMADA_A_VARIABLE_PATRON = "\\b([a-z][A-z]+?\\.)\\b";
     private static final String CLASE_PATRON = "\\b([A-Z][A-z]+)\\b";
 
+    /*
     private static final String sampleCode = String.join("\n", new String[] {
             "package com.example;",
             "",
@@ -51,7 +52,7 @@ public class EditorJava extends EditorSimple{
             "",
             "    /*",
             "     * multi-line comment",
-            "     */",
+            "     /",
             "    public static void main(String[] args) {",
             "        // single-line comment",
             "        for(String arg: args) {",
@@ -64,6 +65,7 @@ public class EditorJava extends EditorSimple{
             "",
             "}"
     });
+    */
 
    // private static final String NUMERO_PATRON = ;
 
@@ -101,13 +103,13 @@ public class EditorJava extends EditorSimple{
                 })
                 .subscribe(this::applyHighlighting);
 
-        this.replaceText(0,0,sampleCode);
+        //this.replaceText(0,0,sampleCode);
         this.setId("java-editor");
         //this.setStyle("-fx-font-family: \"JetBrains Mono\";");
 
     }
     public EditorJava(String text){
-        super(text);
+        super();
 
         executor = Executors.newSingleThreadExecutor();
         //this.getStylesheets().add(Java.class.getResource(("java-keywords.css")).toExternalForm());
@@ -129,8 +131,13 @@ public class EditorJava extends EditorSimple{
                 })
                 .subscribe(this::applyHighlighting);
 
-        this.replaceText(0,0,sampleCode);
+        //this.replaceText(text);
         this.setId("java-editor");
+        this.appendText(text);
+        this.getUndoManager().forgetHistory();
+        this.getUndoManager().mark();
+        this.selectRange(0, 0);
+
         //this.setStyle("-fx-font-family: \"JetBrains Mono\";");
 
     }

@@ -12,9 +12,13 @@ public class BarraMenu extends MenuBar {
     private final Menu menuVer = new Menu("Ver");
     private final Menu menuAyuda = new Menu("Ayuda");
 
-    private final MenuItem menuItemAbrirArchivo = new MenuItem("Abrir archivo");
-    private final MenuItem menuItemNuevoProyecto = new MenuItem("Nuevo proyecto...");
+    private final Menu menuNuevo = new Menu("Nuevo");
+
+    private final MenuItem menuItemNuevoProyecto = new MenuItem("Proyecto...");
     private final MenuItem menuItemAbrirProyecto = new MenuItem("Abrir proyecto...");
+    private final MenuItem menuItemNuevaClaseDesdeArchivo = new MenuItem("Clase desde archivo...");
+    private final MenuItem menuItemNuevaClase = new MenuItem("Clase...");
+    private final MenuItem menuItemNuevoPaquete = new MenuItem("Paquete...");
     private final MenuItem menuItemGuardar = new MenuItem("Guardar");
     private final MenuItem menuItemGuardarComo = new MenuItem("Guardar como...");
     private final MenuItem menuItemCerrarProyecto = new MenuItem("Cerrar Proyecto");
@@ -44,9 +48,12 @@ public class BarraMenu extends MenuBar {
 */
 
     public BarraMenu(Ide ide) {
-        menuArchivo.getItems().addAll(menuItemAbrirArchivo, menuItemNuevoProyecto, menuItemAbrirProyecto, menuItemGuardar, menuItemGuardarComo, new SeparatorMenuItem(),
+        menuArchivo.getItems().addAll(menuNuevo, menuItemAbrirProyecto, menuItemGuardar, menuItemGuardarComo, new SeparatorMenuItem(),
                 menuItemCerrarProyecto, new SeparatorMenuItem(),
                 menuItemSalir);
+        menuNuevo.getItems().addAll(menuItemNuevoProyecto, new SeparatorMenuItem(),
+                                    menuItemNuevaClase, menuItemNuevaClaseDesdeArchivo, new SeparatorMenuItem(),
+                                    menuItemNuevoPaquete);
         menuEdicion.getItems().addAll(menuItemDeshacer, new SeparatorMenuItem(),
                 menuItemCortar, menuItemCopiar,menuItemPegar, menuItemEliminar, new SeparatorMenuItem(),
                 menuItemBuscar, new SeparatorMenuItem(),
@@ -54,7 +61,7 @@ public class BarraMenu extends MenuBar {
 
         //PROPIEDADES INICIALES
         menuItemGuardar.setDisable(true);
-        menuItemAbrirArchivo.setVisible(false);
+        //menuItemNuevaClaseDesdeArchivo.setVisible(false);
         menuItemGuardarComo.setDisable(true);
         menuItemCerrarProyecto.setDisable(true);
         menuEdicion.setDisable(true);
@@ -65,14 +72,18 @@ public class BarraMenu extends MenuBar {
 
         ide.hayProyectoAbierto().addListener( (obs, oldVal, newVal) -> {
             //menuEdicion.setDisable(!newVal);
-            menuItemSalir.setDisable(!newVal);
-            menuItemAbrirArchivo.setVisible(newVal);
+            //menuItemSalir.setDisable(!newVal);
+            //menuItemNuevaClaseDesdeArchivo.setVisible(newVal);
             menuItemCerrarProyecto.setDisable(!newVal);
-            menuEdicion.setDisable(!newVal);
+            menuItemNuevaClase.setDisable(!newVal);
+            menuItemNuevaClaseDesdeArchivo.setDisable(!newVal);
+            menuItemNuevoPaquete.setDisable(!newVal);
         });
 
         ide.hayPestanaAbierta().addListener( (obs, oldVal, newVal) ->{
             menuEdicion.setDisable(!newVal);
+            menuItemGuardar.setDisable(!newVal);
+            menuItemGuardarComo.setDisable(!newVal);
         });
 
        // ControladoresMenu controladoresMenu = new ControladoresMenu(ide);
@@ -96,8 +107,8 @@ public class BarraMenu extends MenuBar {
         return menuAyuda;
     }
 
-    public MenuItem getMenuItemAbrirArchivo() {
-        return menuItemAbrirArchivo;
+    public MenuItem getMenuItemNuevaClaseDesdeArchivo() {
+        return menuItemNuevaClaseDesdeArchivo;
     }
 
     public MenuItem getMenuItemAbrirProyecto() {
@@ -155,7 +166,20 @@ public class BarraMenu extends MenuBar {
     public MenuBar getBarraMenu() {
         return this;
     }
-/*
+
+    public Menu getMenuNuevo() {
+        return menuNuevo;
+    }
+
+    public MenuItem getMenuItemNuevaClase() {
+        return menuItemNuevaClase;
+    }
+
+    public MenuItem getMenuItemNuevoPaquete() {
+        return menuItemNuevoPaquete;
+    }
+
+    /*
 
     private class ControladoresMenu {
         private Ide ide;

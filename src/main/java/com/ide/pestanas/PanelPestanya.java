@@ -209,4 +209,5 @@ public class PanelPestanya extends TabPane {
     public SimpleBooleanProperty hayPestanaAbierta(){
         return hayPestanaAbierta;
     }
+
 }

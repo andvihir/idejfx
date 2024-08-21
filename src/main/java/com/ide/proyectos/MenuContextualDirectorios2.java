@@ -2,10 +2,9 @@ package com.ide.proyectos;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TreeItem;
 
-public class MenuContextualDirectorios extends ContextMenu{
-    public MenuContextualDirectorios() {
+public class MenuContextualDirectorios2 extends ContextMenu{
+    public MenuContextualDirectorios2() {
 
 
         MenuItem cortar = new MenuItem("Cortar");
