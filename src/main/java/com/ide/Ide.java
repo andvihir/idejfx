@@ -5,6 +5,7 @@ import com.ide.controladores.ControladorBarraDirectorios;
 import com.ide.controladores.ControladorMenu;
 import com.ide.editor.EditorSimple;
 import com.ide.editor.EditorJava;
+import com.ide.lenguaje.JavaMenu;
 import com.ide.menu.BarraMenu;
 import com.ide.pestanas.PanelPestanya;
 import com.ide.proyectos.BarraDirectorios;
@@ -47,8 +48,12 @@ public class Ide extends BorderPane{
 
 
     private BarraDirectorios barraDirectorios = new BarraDirectorios(this);
-    private TreeDirectorios treeDirectorios;
+    private TreeDirectorios treeDirectorios = new TreeDirectorios();
     private ControladorMenu controladorMenu = new ControladorMenu(this);
+
+    private final JavaMenu javaMenu = new JavaMenu(this);
+
+    private BufferedReader reader;
 
 
     public Ide() {
@@ -159,6 +164,9 @@ public class Ide extends BorderPane{
         return hayPestanaAbierta;
     }
 
+    public ScrollPane getScrollPaneMenuRodapie() {
+        return scrollPaneMenuRodapie;
+    }
     /*
     public ReadOnlyBooleanProperty hayArchivoAbierto(Ide ide){
         final SimpleBooleanProperty propiedad = new SimpleBooleanProperty(false);
@@ -200,6 +208,7 @@ public class Ide extends BorderPane{
        // this.setContextMenu(menuContextoInicial);
         labelInicio.setStyle("-fx-font-size: 26");
         stackPane.getChildren().addAll(scrollPane, labelInicio);
+
 
         //TODO HACER METODOS
         nuevoProyecto.setOnAction(e -> {
@@ -262,5 +271,17 @@ public class Ide extends BorderPane{
 
     public ControladorMenu getControladorMenu() {
         return controladorMenu;
+    }
+
+    public BufferedReader getReader() {
+        return reader;
+    }
+
+    public void setReader(BufferedReader reader) {
+        this.reader = reader;
+    }
+
+    public JavaMenu getJavaMenu() {
+        return javaMenu;
     }
 }

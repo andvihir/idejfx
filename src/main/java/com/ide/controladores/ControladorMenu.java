@@ -198,6 +198,7 @@ public class ControladorMenu {
 
     public void cargarArchivoAEditor(File archivo, boolean subrayadoJava) throws IOException {
         if(this.ide.getPanelPestanya().estaArchivoYaAbierto(archivo)) return;
+        if(getExtensionArchivo(archivo.getName()).isPresent() && !getExtensionArchivo(archivo.getName()).get().equals("java")) return;
 
         BufferedReader texto = new BufferedReader(new FileReader(archivo));
         long lineasTotal;
@@ -380,5 +381,33 @@ public class ControladorMenu {
         }
 
     }
+
+
+
+    public static void guardarArchivoDesdeEditorConDialogoConfirmacion(File archivoReferencia, Ide ide) throws IOException {
+
+        if (ide.getPanelPestanya().hayCambio()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, null, ButtonType.YES, ButtonType.CANCEL);
+            alert.setTitle("Guardar");
+            alert.setHeaderText("¿Desea guardar el archivo?");
+            ((Button) alert.getDialogPane().lookupButton(ButtonType.YES)).setText("Guardar");
+            ((Button) alert.getDialogPane().lookupButton(ButtonType.CANCEL)).setText("Cancelar");
+            Optional<ButtonType> resultado = alert.showAndWait();
+            if (resultado.isPresent() && resultado.get() == ButtonType.YES) {
+                FileWriter myWriter = new FileWriter(archivoReferencia);
+                myWriter.write(ide.getEditor().getText());
+                myWriter.close();
+
+                //this.ide.getEditor().setArchivoReferencia(archivoGuardar);
+                ide.getEditor().setModificado(false);
+                // lastModifiedTime = FileTime.fromMillis(System.currentTimeMillis() + 3000);
+                System.out.println("Guardado con éxito.");
+            } else {
+                return;
+            }
+
+        }
+    }
+
 
 }

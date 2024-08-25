@@ -16,4 +16,7 @@ module JavaFXPFG.v {
     requires richtextfx.fat;
     requires com.dlsc.formsfx;
     requires java.desktop;
+    requires commons.io;
+    requires java.compiler;
+    requires jdk.unsupported;
 }

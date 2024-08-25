@@ -26,6 +26,7 @@ public class BarraDirectorios extends ScrollPane {
         this.menuContextoDirectorios = new TreeDirectorios.MenuContextualDirectorios(ide);
         this.setContextMenu(this.menuContextoDirectorios);
 
+
         //inicio();
       // this.setContextMenu(new MenuContextualDirectorios());
     }

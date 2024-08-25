@@ -2,20 +2,27 @@ package com;
 import com.ide.Ide;
 import com.ide.editor.EditorJava;
 import com.ide.editor.fuentes.Fuentes;
+import com.ide.utils.ConsolaControl;
+import com.ide.utils.CustomOutputStream;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.apache.commons.io.output.TeeOutputStream;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.Optional;
+
+import static java.lang.System.out;
 
 public class Main extends Application {
 
@@ -66,6 +73,22 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("IDE Java UNED");
         primaryStage.show();
+
+
+        ide.hayProyectoAbierto().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                /*
+                PrintStream printStream = new PrintStream(new CustomOutputStream(ide.getJavaMenu().getTextoSalida()));
+                TeeOutputStream out = new TeeOutputStream(System.out, printStream);
+                try {
+                    out.write("HI".getBytes());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }*/
+                System.setOut(new PrintStream(new CustomOutputStream(ide.getJavaMenu().getTextoSalida())));
+            }
+        });
+
 
 
         //TODO ARREGLAR EL CIERRE DEL PROGRAMA -> PEDIR PARA GUARDAR ANTES DE SALIR?
