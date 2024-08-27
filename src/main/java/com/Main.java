@@ -71,7 +71,7 @@ public class Main extends Application {
 
         //primaryStage.setMaximized(true);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("IDE Java UNED");
+        primaryStage.setTitle("IDEJfx");
         primaryStage.show();
 
 
@@ -85,7 +85,8 @@ public class Main extends Application {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }*/
-                System.setOut(new PrintStream(new CustomOutputStream(ide.getJavaMenu().getTextoSalida())));
+                //TODO CONSOLE
+                //System.setOut(new PrintStream(new CustomOutputStream(ide.getJavaMenu().getTextoSalida())));
             }
         });
 

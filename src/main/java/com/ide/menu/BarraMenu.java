@@ -1,14 +1,12 @@
 package com.ide.menu;
 
 import com.ide.Ide;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.*;
 
 public class BarraMenu extends MenuBar {
     private final Menu menuArchivo = new Menu("Archivo");
     private final Menu menuEdicion = new Menu("Edición");
+    private final Menu menuEjecucion = new Menu("Ejecución");
     private final Menu menuVer = new Menu("Ver");
     private final Menu menuAyuda = new Menu("Ayuda");
 
@@ -16,8 +14,8 @@ public class BarraMenu extends MenuBar {
 
     private final MenuItem menuItemNuevoProyecto = new MenuItem("Proyecto...");
     private final MenuItem menuItemAbrirProyecto = new MenuItem("Abrir proyecto...");
-    private final MenuItem menuItemNuevaClaseDesdeArchivo = new MenuItem("Clase desde archivo...");
     private final MenuItem menuItemNuevaClase = new MenuItem("Clase...");
+    private final MenuItem menuItemNuevaClaseDesdeArchivo = new MenuItem("Clase desde archivo...");
     private final MenuItem menuItemNuevoPaquete = new MenuItem("Paquete...");
     private final MenuItem menuItemGuardar = new MenuItem("Guardar");
     private final MenuItem menuItemGuardarComo = new MenuItem("Guardar como...");
@@ -25,12 +23,19 @@ public class BarraMenu extends MenuBar {
     private final MenuItem menuItemSalir = new MenuItem("Salir");
 
     private final MenuItem menuItemDeshacer = new MenuItem("Deshacer");
+    private final MenuItem menuItemRehacer = new MenuItem("Rehacer");
     private final MenuItem menuItemCortar = new MenuItem("Cortar");
     private final MenuItem menuItemCopiar = new MenuItem("Copiar");
     private final MenuItem menuItemPegar = new MenuItem("Pegar");
     private final MenuItem menuItemEliminar = new MenuItem("Eliminar");
     private final MenuItem menuItemBuscar = new MenuItem("Buscar...");
     private final MenuItem menuItemSeleccionarTodo = new MenuItem("Seleccionar Todo");
+
+    private final MenuItem menuItemEjecutar = new MenuItem("Ejecutar");
+    private final MenuItem menuItemConfigurarEjecucion = new MenuItem("Configurar ejecución...");
+
+    private final MenuItem checkMenuItemBarraDirectorios = new MenuItem("Barra Directorios");
+    private final MenuItem checkMenuItemBarraCompilacion = new MenuItem("Barra Compilación/Consola");
 
     private final SeparatorMenuItem separator = new SeparatorMenuItem();
 
@@ -54,10 +59,12 @@ public class BarraMenu extends MenuBar {
         menuNuevo.getItems().addAll(menuItemNuevoProyecto, new SeparatorMenuItem(),
                                     menuItemNuevaClase, menuItemNuevaClaseDesdeArchivo, new SeparatorMenuItem(),
                                     menuItemNuevoPaquete);
-        menuEdicion.getItems().addAll(menuItemDeshacer, new SeparatorMenuItem(),
+        menuEdicion.getItems().addAll(menuItemDeshacer, menuItemRehacer, new SeparatorMenuItem(),
                 menuItemCortar, menuItemCopiar,menuItemPegar, menuItemEliminar, new SeparatorMenuItem(),
                 menuItemBuscar, new SeparatorMenuItem(),
                 menuItemSeleccionarTodo);
+        menuEjecucion.getItems().addAll(menuItemEjecutar, menuItemConfigurarEjecucion);
+        menuVer.getItems().addAll(checkMenuItemBarraDirectorios, checkMenuItemBarraCompilacion);
 
         //PROPIEDADES INICIALES
         menuItemGuardar.setDisable(true);
@@ -65,10 +72,14 @@ public class BarraMenu extends MenuBar {
         menuItemGuardarComo.setDisable(true);
         menuItemCerrarProyecto.setDisable(true);
         menuEdicion.setDisable(true);
+        menuItemNuevaClase.setDisable(true);
+        menuItemNuevaClaseDesdeArchivo.setDisable(true);
+        menuItemNuevoPaquete.setDisable(true);
+        menuEjecucion.setDisable(true);
+        menuVer.setDisable(true);
 
 
-
-        this.getMenus().addAll(menuArchivo, menuEdicion, menuVer, menuAyuda);
+        this.getMenus().addAll(menuArchivo, menuEdicion, menuEjecucion, menuVer, menuAyuda);
 
         ide.hayProyectoAbierto().addListener( (obs, oldVal, newVal) -> {
             //menuEdicion.setDisable(!newVal);
@@ -78,6 +89,8 @@ public class BarraMenu extends MenuBar {
             menuItemNuevaClase.setDisable(!newVal);
             menuItemNuevaClaseDesdeArchivo.setDisable(!newVal);
             menuItemNuevoPaquete.setDisable(!newVal);
+            menuEjecucion.setDisable(!newVal);
+            menuVer.setDisable(!newVal);
         });
 
         ide.hayPestanaAbierta().addListener( (obs, oldVal, newVal) ->{
@@ -177,6 +190,30 @@ public class BarraMenu extends MenuBar {
 
     public MenuItem getMenuItemNuevoPaquete() {
         return menuItemNuevoPaquete;
+    }
+
+    public MenuItem getMenuItemRehacer() {
+        return menuItemRehacer;
+    }
+
+    public MenuItem getMenuItemEjecutar() {
+        return menuItemEjecutar;
+    }
+
+    public MenuItem getMenuItemConfigurarEjecucion() {
+        return menuItemConfigurarEjecucion;
+    }
+
+    public Menu getMenuEjecucion() {
+        return menuEjecucion;
+    }
+
+    public MenuItem getCheckMenuItemBarraDirectorios() {
+        return checkMenuItemBarraDirectorios;
+    }
+
+    public MenuItem getCheckMenuItemBarraCompilacion() {
+        return checkMenuItemBarraCompilacion;
     }
 
     /*

@@ -210,4 +210,21 @@ public class PanelPestanya extends TabPane {
         return hayPestanaAbierta;
     }
 
+    public void guardarTodasPestanas() throws IOException {
+        for(Tab t : this.getTabs()){
+            if(t instanceof Pestanya){
+                if(((Pestanya) t).getEditor().getModificado()) {
+                    guardarArchivo(((Pestanya) t).getEditor().getArchivoReferencia(), (Pestanya) t);
+                    ((Pestanya) t).getEditor().setModificado(false);
+                }
+                /*
+                //EditorSimple editor = ((Pestanya) t).getEditor();
+
+                if(editor instanceof EditorJava){
+                    ((EditorJava) editor).cerrarEditorJava();
+                }*/
+            }
+        }
+    }
+
 }

@@ -8,6 +8,7 @@ module JavaFXPFG.v {
     exports com.ide.menu;
     exports com.ide.pestanas;
     exports com.ide.proyectos;
+    exports com.ide.lenguaje;
     requires java.logging;
     requires javafx.base;
     requires javafx.controls;

@@ -434,14 +434,16 @@ public class Compilador {
 
 
 
-    public static Class<?> compilarCodigoTotalDevuelveClaseTest(File[] files, TextArea textoSalida, File raiz) throws Exception {
+    public static ClassLoader compilarCodigoTotalDevuelveClaseTest(File[] files, TextArea textoSalida, File raiz) throws Exception {
+
+        ClassLoader classLoader = null;
         StringBuilder stringBuilder = new StringBuilder();
         JavaCompiler compilador = ToolProvider.getSystemJavaCompiler();
         StandardJavaFileManager fileManager = compilador.getStandardFileManager(null, Locale.ENGLISH, Charset.defaultCharset());
 
 
         //File directorioSalida = new File(files[0].getParentFile(), "class");
-        File directorioSalida = new File(raiz, "build-out");
+        File directorioSalida = new File(raiz, ".classes");
         FileUtils.forceMkdir(directorioSalida);
 
         fileManager.setLocation(StandardLocation.CLASS_OUTPUT, Collections.singletonList(directorioSalida));
@@ -454,7 +456,7 @@ public class Compilador {
         //optionList.addAll(Arrays.asList("-classpath",System.getProperty("java.class.path")));
 
         optionList.add("-classpath");
-        optionList.add("build-out");
+        optionList.add(".classes");
 
 
 // any other options you want
@@ -497,9 +499,9 @@ public class Compilador {
 
         if(call) stringBuilder.append("Compilado con éxito.\n");
         else stringBuilder.append("No Compilado.\n");
-
         Class<?> clase = null;
         if(call){
+            /*
             StringBuilder sb = new StringBuilder();
             for(JavaFileObject jfo : fileManager.list(StandardLocation.CLASS_OUTPUT, "", Collections.singleton(JavaFileObject.Kind.CLASS), true)){
                 System.out.println(jfo.getName());
@@ -517,8 +519,9 @@ public class Compilador {
                 System.out.println(sb.toString());
                 //Class<?> clase = classLoader.loadClass(jfo.toUri().toURL().toString());
             }
-            ClassLoader classLoader = fileManager.getClassLoader(StandardLocation.CLASS_OUTPUT);
+             */
 
+            classLoader = fileManager.getClassLoader(StandardLocation.CLASS_OUTPUT);
 
             clase = classLoader.loadClass("a.HelloWorld99");
 
@@ -579,7 +582,7 @@ public class Compilador {
         fileManager.close();
         textoSalida.setText(stringBuilder.toString());
 
-        return clase;
+        return classLoader;
 
 
         //System.out.println(compilador.getTask(null, null, null ,null , null, fileObjects).call());

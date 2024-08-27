@@ -51,7 +51,7 @@ public class Ide extends BorderPane{
     private TreeDirectorios treeDirectorios = new TreeDirectorios();
     private ControladorMenu controladorMenu = new ControladorMenu(this);
 
-    private final JavaMenu javaMenu = new JavaMenu(this);
+    private JavaMenu javaMenu = new JavaMenu(this);
 
     private BufferedReader reader;
 
@@ -213,6 +213,7 @@ public class Ide extends BorderPane{
         //TODO HACER METODOS
         nuevoProyecto.setOnAction(e -> {
             boolean r = ControladorMenu.crearNuevoProyecto(this);
+            this.javaMenu = new JavaMenu(this);
             if(r) setVistaTotal();
 
         });
@@ -220,6 +221,7 @@ public class Ide extends BorderPane{
         abrirProyectoExistente.setOnAction(e->{
 
             boolean r = ControladorMenu.abrirProyectoExistente(this);
+            this.javaMenu = new JavaMenu(this);
             if(r) setVistaTotal();
 
         });
@@ -242,6 +244,7 @@ public class Ide extends BorderPane{
         this.treeDirectorios.setRoot(null);
         setVistaInicio();
         hayProyectoAbierto.set(false);
+        this.javaMenu = null;
     }
 
     public void setBarraDirectorios(boolean b){
@@ -283,5 +286,9 @@ public class Ide extends BorderPane{
 
     public JavaMenu getJavaMenu() {
         return javaMenu;
+    }
+
+    public void setJavaMenu(JavaMenu javaMenu) {
+        this.javaMenu = javaMenu;
     }
 }
