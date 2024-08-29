@@ -3,6 +3,7 @@ package com.ide.lenguaje;
 import com.ide.Ide;
 import com.ide.controladores.ControladorMenu;
 import com.ide.lenguaje.config.DialogoSeleccionarClaseMain;
+import com.ide.utils.CustomOutputStream;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -12,6 +13,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Optional;
@@ -73,6 +75,8 @@ public class JavaMenu extends BorderPane {
         ide.getScrollPaneMenuRodapie().setContent(this);
         this.textoSalida.setEditable(false);
 
+        //TODO CONSOLE
+        //System.setOut(new PrintStream(new CustomOutputStream(this.textoSalida)));
 
         botonCompilarProyecto.disableProperty().bind(this.ide.hayProyectoAbierto().not());
         botonCompilarClase.disableProperty().bind(this.ide.hayPestanaAbierta().not());
@@ -159,12 +163,6 @@ public class JavaMenu extends BorderPane {
         File[] r = new File[]{file};
 
         Compilador.compilarCodigoSeparado(r, this.textoSalida, this.ide.getTreeDirectorios().getRoot_file());
-
-    }
-
-    public void compilarCodigoTotal(File[] files) throws Exception {
-
-        Compilador.compilarCodigoTotalTest(files, this.textoSalida, this.ide.getTreeDirectorios().getRoot_file());
 
     }
 

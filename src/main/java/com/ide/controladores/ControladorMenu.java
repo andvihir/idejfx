@@ -9,6 +9,7 @@ import com.ide.menu.BarraMenu;
 import com.ide.menu.DialogoNuevaClase;
 import com.ide.menu.DialogoNuevaClaseDesdeArchivo;
 import com.ide.menu.DialogoNuevoProyecto;
+import com.ide.plantillas.Plantilla;
 import com.ide.proyectos.TreeDirectorios;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -24,6 +25,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.*;
 import javafx.util.Pair;
+import org.reactfx.util.Tuple3;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -51,11 +53,15 @@ public class ControladorMenu {
         barraMenu.getMenuItemNuevaClase().setOnAction(e -> {
             if(!this.ide.hayProyectoAbierto().get()) return;
             DialogoNuevaClase dialogo = new DialogoNuevaClase(ide);
-            Optional<Pair<String, File>> result = dialogo.showAndWait();
+            Optional<Tuple3<String, File, Plantilla.TipoArchivoJava>> result = dialogo.showAndWait();
             result.ifPresent( nombreArchivoYPath ->{
-                File nuevoArchivo = new File(nombreArchivoYPath.getValue(), nombreArchivoYPath.getKey());
+                File nuevoArchivo = new File(nombreArchivoYPath._2, nombreArchivoYPath._1);
                 try{
                     Files.createFile(nuevoArchivo.toPath());
+                    FileWriter myWriter = new FileWriter(nuevoArchivo);
+                    String nombrePaquete = calcularPaquete(nombreArchivoYPath._2);
+                    myWriter.write(Plantilla.crearArchivoJava(nombrePaquete,nombreArchivoYPath._1.replace(".java",""), nombreArchivoYPath._3));
+                    myWriter.close();
                     cargarArchivoAEditor(nuevoArchivo, getExtensionArchivo(nuevoArchivo.getName()).get().equals("java"));
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
@@ -368,7 +374,9 @@ public class ControladorMenu {
                 ide.setTreeDirectorios(new TreeDirectorios(archivo, ide));
                 ide.getBarraDirectorios().setContent(ide.getTreeDirectorios());
                 ide.hayProyectoAbierto().set(true);
+                TextArea t= ide.getJavaMenu().getTextoSalida();
                 ide.setJavaMenu(new JavaMenu(ide));
+                ide.getJavaMenu().setTextoSalida(t);
             }
         });
         return r.get();
@@ -394,7 +402,10 @@ public class ControladorMenu {
                 //this.getPanelDirectorios().autosize();
                 r = true;
                 ide.hayProyectoAbierto().set(true);
+                TextArea t= ide.getJavaMenu().getTextoSalida();
                 ide.setJavaMenu(new JavaMenu(ide));
+                ide.getJavaMenu().setTextoSalida(t);
+
                 // scrollPane.maxHeight()
                 //setLeft(scrollPane);
             } catch (Exception ignored) {
@@ -472,5 +483,17 @@ public class ControladorMenu {
         }
     }
 
+    private String calcularPaquete(File path){
+        String pathQuitar = this.ide.getTreeDirectorios().getRoot_file().getAbsolutePath();
+        String path1 = path.getAbsolutePath();
+        String path2 = path1.replace(pathQuitar, "");
+        if(path2.length()>0) {
+            path2 = path2.substring(1);
+            path2 = path2.replaceAll("\\\\", ".");
+        }else{
+            path2=null;
+        }
+        return path2;
+    }
 
 }

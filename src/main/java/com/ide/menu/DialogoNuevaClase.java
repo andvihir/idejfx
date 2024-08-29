@@ -1,6 +1,7 @@
 package com.ide.menu;
 
 import com.ide.Ide;
+import com.ide.plantillas.Plantilla;
 import com.ide.proyectos.TreeDirectorios;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -8,12 +9,14 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.util.Pair;
+import org.reactfx.util.Tuple3;
+import org.reactfx.util.Tuples;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class DialogoNuevaClase extends Dialog<Pair<String, File>> {
+public class DialogoNuevaClase extends Dialog<Tuple3<String, File, Plantilla.TipoArchivoJava>> {
 
 
     private final ButtonType aceptarButtonType = new ButtonType("Aceptar", ButtonBar.ButtonData.OK_DONE);
@@ -24,6 +27,11 @@ public class DialogoNuevaClase extends Dialog<Pair<String, File>> {
 
     private File filePathDestino;
     private String nombreArchivo;
+    ToggleGroup grupo = new ToggleGroup();
+    RadioButton botonClase = new RadioButton("Clase");
+    RadioButton botonInterface = new RadioButton("Interface");
+    RadioButton botonRecord = new RadioButton("Record");
+    RadioButton botonEnum = new RadioButton("Enum");
 
     public DialogoNuevaClase(Ide ide) {
 
@@ -35,6 +43,17 @@ public class DialogoNuevaClase extends Dialog<Pair<String, File>> {
         this.setTitle("Nueva Clase");
 
         this.getDialogPane().getButtonTypes().addAll(aceptarButtonType, cancelarButtonType);
+
+        botonClase.setToggleGroup(grupo);
+        botonInterface.setToggleGroup(grupo);
+        botonRecord.setToggleGroup(grupo);
+        botonEnum.setToggleGroup(grupo);
+        botonClase.setSelected(true);
+
+        botonClase.setUserData(Plantilla.TipoArchivoJava.CLASS);
+        botonInterface.setUserData(Plantilla.TipoArchivoJava.INTERFACE);
+        botonRecord.setUserData(Plantilla.TipoArchivoJava.RECORD);
+        botonEnum.setUserData(Plantilla.TipoArchivoJava.ENUM);
 
         grid.setHgap(10);
         grid.setVgap(10);
@@ -52,10 +71,17 @@ public class DialogoNuevaClase extends Dialog<Pair<String, File>> {
 
 
         grid.add(treeDirectorios, 0,0);
+
         grid.add(new Label("Archivo:"), 0, 1);
         grid.add(nombreArchivo, 1, 1);
         grid.add(archivoFinalPathLabel, 0, 2);
         grid.add(archivoYaExiste, 0, 3);
+
+
+        grid.add(botonClase, 2,1);
+        grid.add(botonInterface, 2,2);
+        grid.add(botonRecord, 2,3);
+        grid.add(botonEnum, 2,4);
         Node aceptarBoton = this.getDialogPane().lookupButton(aceptarButtonType);
         aceptarBoton.setDisable(true);
 
@@ -105,7 +131,29 @@ public class DialogoNuevaClase extends Dialog<Pair<String, File>> {
         this.setResultConverter(dialogoBoton -> {
             if (dialogoBoton == aceptarButtonType) {
                 //return new Pair<>(nombre.getText(), ubicacion.getText());
-                return new Pair<>(this.nombreArchivo, treeDirectorios.getSelectionModel().getSelectedItem().getValue());
+                /*
+                Plantilla.TipoArchivoJava tipoArchivoJava;
+                switch(grupo.getSelectedToggle().getUserData()){
+                    case "Clase":
+                        tipoArchivoJava= Plantilla.TipoArchivoJava.CLASS;
+                        break;
+                        case "Interface":
+                            tipoArchivoJava= Plantilla.TipoArchivoJava.INTERFACE;
+                            break;
+                            case "Record":
+                                tipoArchivoJava= Plantilla.TipoArchivoJava.RECORD;
+                                break;
+                                case "Enum":
+                                    tipoArchivoJava= Plantilla.TipoArchivoJava.ENUM;
+                                    break;
+                    default:
+                        tipoArchivoJava= Plantilla.TipoArchivoJava.CLASS;
+                        break;
+                }
+
+                 */
+
+                return Tuples.t(this.nombreArchivo, treeDirectorios.getSelectionModel().getSelectedItem().getValue(), (Plantilla.TipoArchivoJava) grupo.getSelectedToggle().getUserData());
             }
             return null;
         });

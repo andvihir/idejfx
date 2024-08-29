@@ -2,6 +2,7 @@ package com;
 import com.ide.Ide;
 import com.ide.editor.EditorJava;
 import com.ide.editor.fuentes.Fuentes;
+import com.ide.lenguaje.JavaMenu;
 import com.ide.utils.ConsolaControl;
 import com.ide.utils.CustomOutputStream;
 import javafx.application.Application;
@@ -73,7 +74,14 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("IDEJfx");
         primaryStage.show();
+        /*
+        TextArea textArea = new TextArea();
+        Platform.runLater( () -> {
 
+            System.setOut(new PrintStream(new CustomOutputStream(textArea)));
+            ide.getJavaMenu().setTextoSalida(textArea);
+        });
+*/
 
         ide.hayProyectoAbierto().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
@@ -86,7 +94,9 @@ public class Main extends Application {
                     throw new RuntimeException(e);
                 }*/
                 //TODO CONSOLE
-                //System.setOut(new PrintStream(new CustomOutputStream(ide.getJavaMenu().getTextoSalida())));
+               // System.setOut(new PrintStream(new CustomOutputStream(ide.getJavaMenu().getTextoSalida())));
+
+
             }
         });
 
