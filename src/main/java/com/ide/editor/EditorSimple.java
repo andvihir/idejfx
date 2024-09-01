@@ -1,5 +1,6 @@
 package com.ide.editor;
 
+import com.Main;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -38,6 +39,7 @@ public class EditorSimple extends CodeArea {
     public EditorSimple() {
         super();
         this.setParagraphGraphicFactory(LineNumberFactory.get(this));
+
 
     /*
         this.textProperty().addListener(new ChangeListener<String>() {

@@ -1,5 +1,6 @@
 package com.ide.controladores;
 
+import com.Main;
 import com.ide.Ide;
 import com.ide.editor.EditorJava;
 import com.ide.editor.EditorSimple;
@@ -247,6 +248,16 @@ public class ControladorMenu {
             }
         });
 
+        barraMenu.getCheckMenuItemModoOscuro().setOnAction(e -> {
+            if(((CheckMenuItem)e.getSource()).isSelected()){
+                ide.getStylesheets().remove(EditorJava.class.getResource("java-keywords.css").toExternalForm());
+                ide.getStylesheets().add(Ide.class.getResource("styles.css").toExternalForm());
+            }else{
+                ide.getStylesheets().remove(Ide.class.getResource("styles.css").toExternalForm());
+                ide.getStylesheets().add(EditorJava.class.getResource("java-keywords.css").toExternalForm());
+            }
+        });
+
 
         //----- ACELERADORES-----
         //barraMenu.getMenuItemNuevaClaseDesdeArchivo().setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
@@ -312,7 +323,7 @@ public class ControladorMenu {
         //this.ide.getEditor().setArchivoReferencia(archivoGuardar);
         this.ide.getEditor().setModificado(false);
         // lastModifiedTime = FileTime.fromMillis(System.currentTimeMillis() + 3000);
-        System.out.println("Guardado con éxito.");
+        //System.out.println("Guardado con éxito.");
     }
 
     public static Optional<String> getExtensionArchivo(String filename) {
@@ -364,7 +375,7 @@ public class ControladorMenu {
         Optional<Pair<String, String>>  result = dialogoNuevoProyecto.showAndWait();
         result.ifPresent( nombreYRuta ->{
             r.set(true);
-            System.out.println("nombreProyecto= "+nombreYRuta.getKey() + ", ruta = "+nombreYRuta.getValue());
+            //System.out.println("nombreProyecto= "+nombreYRuta.getKey() + ", ruta = "+nombreYRuta.getValue());
             String nombreProyecto = nombreYRuta.getKey();
             String ruta = nombreYRuta.getValue();
             String rutaFinal = ruta+"\\"+nombreProyecto;
@@ -475,7 +486,7 @@ public class ControladorMenu {
                 //this.ide.getEditor().setArchivoReferencia(archivoGuardar);
                 ide.getEditor().setModificado(false);
                 // lastModifiedTime = FileTime.fromMillis(System.currentTimeMillis() + 3000);
-                System.out.println("Guardado con éxito.");
+                //System.out.println("Guardado con éxito.");
             } else {
                 return;
             }

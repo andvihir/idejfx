@@ -76,7 +76,8 @@ public class JavaMenu extends BorderPane {
         this.textoSalida.setEditable(false);
 
         //TODO CONSOLE
-        //System.setOut(new PrintStream(new CustomOutputStream(this.textoSalida)));
+        System.setOut(new PrintStream(new CustomOutputStream(this.textoSalida)));
+        System.setErr(new PrintStream(new CustomOutputStream(this.textoSalida)));
 
         botonCompilarProyecto.disableProperty().bind(this.ide.hayProyectoAbierto().not());
         botonCompilarClase.disableProperty().bind(this.ide.hayPestanaAbierta().not());
@@ -140,13 +141,13 @@ public class JavaMenu extends BorderPane {
                     Optional<ButtonType> result = dialogo.showAndWait();
                     if (result.isPresent() && result.get() == ButtonType.OK) {
                         this.ide.getPanelPestanya().guardarTodasPestanas();
-                        this.textoSalida.clear();
+                        //this.textoSalida.clear();
                         this.classLoader = compilarCodigoTotalDevuelveClaseTest(FileUtils.convertFileCollectionToFileArray(FileUtils.listFiles(ide.getTreeDirectorios().getRootFile(), null, true)));
 
                         ejecutarClase();
                     }
                 }else{
-                    this.textoSalida.clear();
+                    //this.textoSalida.clear();
                     ejecutarClase();
                 }
 

@@ -127,7 +127,7 @@ public class PanelPestanya extends TabPane {
             public void handle(Event event) {
                 if(pestana.isSelected()){
                     pestana.getPanelPestanya().setPestanyaSeleccionada(pestana);
-                    System.out.println(pestana.getText() + " seleccionada.");
+                   // System.out.println(pestana.getText() + " seleccionada.");
                 }
             }
         });
@@ -174,7 +174,7 @@ public class PanelPestanya extends TabPane {
         myWriter.write(pestana.getEditor().getText());
         myWriter.close();
         // lastModifiedTime = FileTime.fromMillis(System.currentTimeMillis() + 3000);
-        System.out.println("Guardado con éxito.");
+       // System.out.println("Guardado con éxito.");
     }
 
     public boolean estaArchivoYaAbierto(File archivo){

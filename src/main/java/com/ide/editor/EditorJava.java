@@ -1,10 +1,12 @@
 package com.ide.editor;
 
+import com.Main;
 import javafx.concurrent.Task;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.reactfx.Subscription;
+import org.fxmisc.undo.*;
 
 import java.time.Duration;
 import java.util.Collection;
@@ -84,6 +86,7 @@ public class EditorJava extends EditorSimple{
     public EditorJava(){
         super();
         executor = Executors.newSingleThreadExecutor();
+
         //this.getStylesheets().add(Java.class.getResource(("java-keywords.css")).toExternalForm());
         //this.getStylesheets().add(getClass().getResource("java-keywords.css").toExternalForm());
         //this.getStylesheets().add("java-keywords.css");

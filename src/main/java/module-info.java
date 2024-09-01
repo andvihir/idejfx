@@ -14,10 +14,13 @@ module JavaFXPFG.v {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.graphics;
-    requires richtextfx.fat;
     requires com.dlsc.formsfx;
     requires java.desktop;
-    requires commons.io;
     requires java.compiler;
     requires jdk.unsupported;
+    requires org.fxmisc.richtext;
+    requires org.fxmisc.flowless;
+    requires reactfx;
+    requires commons.io;
+    requires org.fxmisc.undo;
 }

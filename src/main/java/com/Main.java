@@ -1,6 +1,7 @@
 package com;
 import com.ide.Ide;
 import com.ide.editor.EditorJava;
+import com.ide.editor.EditorSimple;
 import com.ide.editor.fuentes.Fuentes;
 import com.ide.lenguaje.JavaMenu;
 import com.ide.utils.ConsolaControl;
@@ -18,7 +19,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import org.apache.commons.io.output.TeeOutputStream;
 
 import java.io.*;
 import java.util.Optional;
@@ -67,6 +67,8 @@ public class Main extends Application {
         //scene.getStylesheets().add(Java.class.getResource("java-keywords.css").toExternalForm());
         //scene.getStylesheets().add(Java.class.getResource("java-keywords.css").toExternalForm());
         ide.getStylesheets().add(EditorJava.class.getResource("java-keywords.css").toExternalForm());
+
+        //ide.getStylesheets().add(Main.class.getResource("styles.css").toExternalForm());
         Fuentes.cargarFuentes();
 
 

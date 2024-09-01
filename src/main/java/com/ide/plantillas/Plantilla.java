@@ -10,7 +10,9 @@ public class Plantilla {
                 stringBuilder.append("\n");
             }
             if(!nombre.isEmpty()){
-                stringBuilder.append("public " + tipoArchivoJava.toString().toLowerCase() + " " + nombre + "() {\n");
+                stringBuilder.append("public " + tipoArchivoJava.toString().toLowerCase() + " " + nombre);
+                if(tipoArchivoJava.toString().toLowerCase().contains("record")) stringBuilder.append("()");
+                stringBuilder.append(" {\n");
                 stringBuilder.append("}");
 
             }

@@ -36,6 +36,7 @@ public class BarraMenu extends MenuBar {
 
     private final MenuItem checkMenuItemBarraDirectorios = new MenuItem("Barra Directorios");
     private final MenuItem checkMenuItemBarraCompilacion = new MenuItem("Barra Compilación/Consola");
+    private final CheckMenuItem checkMenuItemModoOscuro = new CheckMenuItem("Modo oscuro");
 
     private final SeparatorMenuItem separator = new SeparatorMenuItem();
 
@@ -64,7 +65,7 @@ public class BarraMenu extends MenuBar {
                 menuItemBuscar, new SeparatorMenuItem(),
                 menuItemSeleccionarTodo);
         menuEjecucion.getItems().addAll(menuItemEjecutar, menuItemConfigurarEjecucion);
-        menuVer.getItems().addAll(checkMenuItemBarraDirectorios, checkMenuItemBarraCompilacion);
+        menuVer.getItems().addAll(checkMenuItemBarraDirectorios, checkMenuItemBarraCompilacion, checkMenuItemModoOscuro);
 
         //PROPIEDADES INICIALES
         menuItemGuardar.setDisable(true);
@@ -215,6 +216,8 @@ public class BarraMenu extends MenuBar {
     public MenuItem getCheckMenuItemBarraCompilacion() {
         return checkMenuItemBarraCompilacion;
     }
+
+    public CheckMenuItem getCheckMenuItemModoOscuro() { return checkMenuItemModoOscuro;    }
 
     /*
 
